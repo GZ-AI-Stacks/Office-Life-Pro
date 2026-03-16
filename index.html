@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="blau">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Office Life Pro – vollständige Büroverwaltung mit PDF-Export, eigenem Logo & Backup. Einmalig 49 € – kein Abo.">
+<meta name="theme-color" content="#2563eb">
+<title>Office Life · Pro</title>
+<link rel="manifest" href="manifest.json">
+<style>
+/* ===== RESET & BASE ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --side:240px;--radius:10px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;transition:background .22s,color .22s}
+input,select,textarea,button{font-family:inherit;font-size:14px}
+button{cursor:pointer;border:none;outline:none}
+a{text-decoration:none;color:inherit}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:100vh}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:var(--side);min-width:var(--side);background:var(--side-bg);color:var(--side-text);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
+  transition:transform .25s,background .22s;z-index:100;
+  box-shadow:2px 0 12px rgba(0,0,0,.12);
+}
+.sidebar-logo{padding:14px 14px 12px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(160deg,var(--side-glow,rgba(255,255,255,.04)) 0%,transparent 100%)}
+.gz-name{font-family:'Outfit',system-ui,sans-serif;font-size:14px;font-weight:900;letter-spacing:2px;line-height:1.1;background:linear-gradient(90deg,#00ff88,#00b4d8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gz-line{width:100%;height:2px;background:linear-gradient(90deg,#00ff88,#00b4d8);border-radius:1px;margin:3px 0 3px}
+.gz-sub{font-size:9px;color:rgba(0,229,160,.5);letter-spacing:2.5px;font-family:monospace;text-transform:uppercase}
+.gz-slogan{font-size:9.5px;color:rgba(255,255,255,.3);margin-top:1px;line-height:1.4}
+.sidebar nav{flex:1;padding:8px 0}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-radius:0;cursor:pointer;transition:background .15s,border-color .15s;color:var(--side-text);
+  border-left:3px solid transparent;font-size:14px;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#e2e8f0}
+.nav-item.active{background:var(--side-active);color:#fff;border-left-color:var(--p)}
+.nav-item .icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:12px 16px;border-top:1px solid #334155;font-size:12px;color:#475569}
+
+/* ===== TOPBAR (mobile) ===== */
+.topbar{
+  display:none;background:#1e293b;color:#fff;padding:0 16px;height:52px;
+  align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;
+}
+.topbar h2{font-size:16px}
+.hamburger{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:28px;max-width:960px;overflow-x:hidden}
+.page{display:none}.page.active{display:block}
+
+/* ===== PAGE HEADER ===== */
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;flex-wrap:wrap}
+.page-header h2{font-size:22px;font-weight:700}
+
+/* ===== BUTTONS ===== */
+.btn{padding:8px 16px;border-radius:7px;font-weight:600;font-size:14px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--p);color:#fff}.btn-primary:hover{background:var(--pd)}
+.btn-ghost{background:var(--bg);color:var(--text)}.btn-ghost:hover{background:var(--border)}
+.btn-danger{background:#fee2e2;color:var(--danger)}.btn-danger:hover{background:#fecaca}
+.btn-success{background:#d1fae5;color:#065f46}.btn-success:hover{background:#a7f3d0}
+.btn-sm{padding:5px 11px;font-size:13px}
+.btn-icon{padding:7px;border-radius:7px;background:var(--bg);color:var(--text)}.btn-icon:hover{background:var(--border)}
+
+/* ===== CARDS & GRID ===== */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surf);border-radius:var(--radius);padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.07);transition:box-shadow .18s,transform .18s}.stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
+.stat-card .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat-card .value{font-size:30px;font-weight:700;margin:4px 0}
+.stat-card .sub{font-size:12px;color:var(--muted)}
+
+/* ===== TABLE ===== */
+.table-wrap{background:var(--surf);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;transition:background .22s}
+.table-search{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;outline:none}
+.search-input:focus{border-color:var(--p)}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 14px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle;transition:background .12s}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--row-hover)}
+.td-actions{display:flex;gap:6px;justify-content:flex-end}
+
+/* ===== BADGES ===== */
+.badge{padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;display:inline-block}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-gray{background:#f1f5f9;color:#475569}
+
+/* ===== FORM ===== */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-size:13px;font-weight:600;color:var(--text)}
+.form-control{padding:9px 12px;border:1px solid var(--border);border-radius:7px;background:var(--surf);color:var(--text);width:100%;outline:none;transition:border .15s,box-shadow .15s}
+.form-control:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--ps)}
+textarea.form-control{resize:vertical;min-height:80px}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+
+/* ===== MODAL ===== */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px)}
+.overlay.show{display:flex}
+.modal{background:var(--surf);color:var(--text);border-radius:14px;padding:24px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.22)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-header h3{font-size:18px;font-weight:700;color:var(--text)}
+.modal-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:6px;transition:background .15s}.modal-close:hover{background:var(--bg)}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.modal .btn-ghost{background:var(--bg);color:var(--text)}
+.modal .btn-ghost:hover{background:var(--border)}
+.modal label{color:var(--text)}
+.modal .form-control{color:var(--text);background:var(--surf);border-color:var(--border)}
+
+/* ===== LINE ITEMS ===== */
+.items-table{width:100%;border-collapse:collapse;margin:12px 0}
+.items-table th{background:var(--bg);padding:8px 10px;font-size:12px;text-align:left;color:var(--muted);border:1px solid var(--border)}
+.items-table td{padding:6px 8px;border:1px solid var(--border)}
+.items-table input{border:none;background:transparent;width:100%;padding:2px 4px;outline:none;font-size:14px}
+.items-table input:focus{background:#f0f9ff}
+.items-total{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-top:8px;font-size:14px}
+.items-total .total-row{display:flex;gap:16px}
+.items-total .total-row span:last-child{font-weight:700;min-width:80px;text-align:right}
+
+/* ===== CHECKLIST ===== */
+.checklist-items{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.check-item input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--p)}
+.check-item label{flex:1;cursor:pointer;font-weight:400}
+.check-item.done label{text-decoration:line-through;color:var(--muted)}
+
+/* ===== TEMPLATE ===== */
+.template-card{background:var(--surf);border-radius:var(--radius);padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.07);border-left:4px solid var(--p);margin-bottom:12px}
+.template-card h4{margin-bottom:6px}
+.template-card p{font-size:13px;color:var(--muted);white-space:pre-line;max-height:80px;overflow:hidden}
+.template-actions{display:flex;gap:8px;margin-top:12px}
+
+/* ===== EMPTY STATE ===== */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .icon{font-size:40px;margin-bottom:12px}
+.empty p{font-size:15px}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;
+  padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;
+  transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ===== PRINT ===== */
+@media print{
+  .sidebar,.topbar,.no-print{display:none!important}
+  .main{padding:0;max-width:100%}
+  .print-doc{padding:32px;font-size:13px}
+  .print-doc table{width:100%}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:700px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{display:flex}
+  .main{padding:16px}
+  .form-grid{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr 1fr}
+}
+@media(max-width:420px){
+  .cards{grid-template-columns:1fr}
+}
+
+/* ===== ZEITERFASSUNG ===== */
+.timer-display{font-size:52px;font-weight:700;letter-spacing:4px;text-align:center;padding:24px 0;color:var(--p);font-variant-numeric:tabular-nums}
+.timer-display.running{color:var(--ok)}
+.timer-btns{display:flex;gap:12px;justify-content:center;margin-bottom:24px}
+
+/* ===== SIGNATURE PAD ===== */
+.sig-canvas{border:2px dashed var(--border);border-radius:8px;cursor:crosshair;background:#fff;touch-action:none;display:block;width:100%}
+
+/* ===== FOTO GRID ===== */
+.photo-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.photo-thumb{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer}
+.photo-add{width:80px;height:80px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;color:var(--muted);background:var(--bg)}
+.photo-add:hover{border-color:var(--p);color:var(--p)}
+
+:root{
+  --p:#2563eb;--pd:#1d4ed8;--ps:#dbeafe;
+  --bg:#f1f5f9;--surf:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --ok:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --side-bg:#1e293b;--side-text:#cbd5e1;--side-active:#1e40af;--side-glow:rgba(37,99,235,.15);
+  --row-hover:#f8fafc;--input-bg:#fff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:0 4px 16px rgba(0,0,0,.11);
+}
+
+/* ===== THEMES — Farbachse ===== */
+[data-theme="blau"],html:not([data-theme]){
+  --p:#2563eb;--pd:#1d4ed8;--ps:#dbeafe;
+  --side-bg:#1e293b;--side-text:#cbd5e1;--side-active:#1e40af;--side-glow:rgba(37,99,235,.15);
+}
+[data-theme="natur"]{
+  --p:#16a34a;--pd:#15803d;--ps:#dcfce7;
+  --side-bg:#14532d;--side-text:#bbf7d0;--side-active:#166534;--side-glow:rgba(22,163,74,.15);
+}
+[data-theme="handwerk"]{
+  --p:#ea580c;--pd:#c2410c;--ps:#fff7ed;
+  --side-bg:#431407;--side-text:#fed7aa;--side-active:#9a3412;--side-glow:rgba(234,88,12,.15);
+}
+
+/* ===== MODI — Helligkeitsachse ===== */
+[data-mode="light"],html:not([data-mode]){
+  --bg:#f1f5f9;--surf:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --ok:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --row-hover:#f8fafc;--input-bg:#ffffff;
+}
+[data-mode="dark"]{
+  --bg:#0f172a;--surf:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;
+  --ok:#34d399;--warn:#fbbf24;--danger:#f87171;
+  --row-hover:#1e3048;--input-bg:#0f172a;
+}
+
+/* ===== DUNKEL-AKZENTANPASSUNGEN ===== */
+[data-theme="blau"][data-mode="dark"],html:not([data-theme])[data-mode="dark"]{
+  --p:#60a5fa;--pd:#3b82f6;--ps:#1e3a5f;--side-bg:#020617;
+}
+[data-theme="natur"][data-mode="dark"]{
+  --p:#4ade80;--pd:#22c55e;--ps:#052e16;
+  --side-bg:#052e16;--side-text:#86efac;
+}
+[data-theme="handwerk"][data-mode="dark"]{
+  --p:#fb923c;--pd:#f97316;--ps:#431407;--side-bg:#1c0a00;
+}
+
+/* ===== LEGACY (altes "dunkel"-Theme) ===== */
+[data-theme="dunkel"]{
+  --p:#60a5fa;--pd:#3b82f6;--ps:#1e3a5f;
+  --bg:#0f172a;--surf:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;
+  --ok:#34d399;--warn:#fbbf24;--danger:#f87171;
+  --row-hover:#1e3048;--input-bg:#0f172a;
+  --side-bg:#020617;--side-text:#cbd5e1;--side-active:#1d4ed8;--side-glow:rgba(96,165,250,.15);
+}
+
+/* ===== THEME SWITCHER BUTTONS ===== */
+.theme-color-btn,.theme-mode-btn{
+  padding:9px 16px;border-radius:8px;border:2px solid var(--border);
+  background:var(--surf);color:var(--text);font-weight:600;font-size:14px;
+  cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:7px;
+}
+.theme-color-btn:hover,.theme-mode-btn:hover{border-color:var(--p);color:var(--p)}
+.theme-color-btn.active,.theme-mode-btn.active{border-color:var(--p);outline:2px solid var(--ps)}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* ===== ZOOM ===== */
+.app-layout{transform-origin:top left}
+.zoom-indicator{
+  position:fixed;bottom:70px;right:24px;background:var(--side-bg,#1e293b);color:#fff;
+  padding:6px 12px;border-radius:6px;font-size:13px;z-index:9998;
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.zoom-indicator.show{opacity:1}
+</style>
+</head>
+<body>
+<!-- LICENSE ACTIVATION SCREEN -->
+<div class="_ls4fw" id="_lS7hha">
+<div class="_lbc12">
+<div class="_llpps">&#128188;</div>
+<div class="_lt3fr">Office Life</div>
+<div class="_lsbxey">Bitte geben Sie Ihren Lizenzschl&uuml;ssel ein,<br>um die App zu aktivieren.</div>
+<input class="_lie9k" id="_lIjo1g" type="text" placeholder="OL-XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" spellcheck="false">
+<button class="_lbt36h" onclick="_0x932918()">Aktivieren</button>
+<div class="_lewiy" id="_lExqlh"></div>
+<div class="_lfvi0">GZ-AI.-STACKS &middot; OFFICE LIFE</div>
+</div>
+</div>
+<script>
+var _0x2fc16d='ol-license';
+function _0x889ff9(s){var h=0x3B72E5A;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;h=(h^(h>>>16))|0;h=(h*0x45d9f3b)|0;}return Math.abs(h);}
+function _0x3643d9(p){var p1=_0x889ff9(p[0]+'ol');var p2=_0x889ff9(p[1]+'gz');var c=(p1^p2^0x4F4C46)>>>0;var k=(c%89990)+10000;return k.toString().substring(0,4);}
+function _0x4c8569(key){if(!key)return false;var k=key.toUpperCase().trim();var m=k.match(/^OL-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);if(!m)return false;return m[3]===_0x3643d9([m[1],m[2]]);}
+function _0x932918(){var input=document.getElementById('_lIjo1g');var error=document.getElementById('_lExqlh');var key=input.value.trim().toUpperCase();if(!key){error.textContent='Bitte Lizenzschl\u00FCssel eingeben';return;}if(_0x4c8569(key)){try{localStorage.setItem(_0x2fc16d,key);}catch(e){}document.getElementById('_lS7hha').classList.add('hidden');error.textContent='';}else{error.textContent='Ung\u00FCltiger Lizenzschl\u00FCssel';input.style.borderColor='#e74c3c';setTimeout(function(){input.style.borderColor='';},2000);}}
+try{var _0xe026d4=localStorage.getItem(_0x2fc16d);if(_0xe026d4&&_0x4c8569(_0xe026d4)){document.getElementById('_lS7hha').classList.add('hidden');}}catch(e){}
+document.getElementById('_lIjo1g').addEventListener('input',function(){var v=this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();if(v.length>2&&!v.startsWith('OL'))v='OL'+v.substring(2);var f='';if(v.length>0)f=v.substring(0,2);if(v.length>2)f+='-'+v.substring(2,6);if(v.length>6)f+='-'+v.substring(6,10);if(v.length>10)f+='-'+v.substring(10,14);this.value=f;});
+document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.key==='Enter')_0x932918();});
+</script>
+
+<a href="#main-content-area" style="position:absolute;top:-40px;left:0;padding:8px;background:var(--p);color:#fff;z-index:9999;border-radius:0 0 4px 0;font-size:14px;transition:top .2s" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Zum Inhalt springen</a>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="38" height="38" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="sg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00ff88" stop-opacity=".15"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></radialGradient>
+          <linearGradient id="ss" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00ff88"/><stop offset="100%" stop-color="#00b4d8"/></linearGradient>
+        </defs>
+        <g transform="translate(26,26)">
+          <circle r="22" fill="url(#sg)"/>
+          <line x1="-15" y1="-13" x2="-7" y2="-5" stroke="#00ff88" stroke-width=".6" opacity=".35"/>
+          <line x1="15" y1="-13" x2="7" y2="-5" stroke="#00d4ff" stroke-width=".6" opacity=".35"/>
+          <line x1="-15" y1="13" x2="-7" y2="5" stroke="#00d4ff" stroke-width=".6" opacity=".25"/>
+          <line x1="15" y1="13" x2="7" y2="5" stroke="#00ff88" stroke-width=".6" opacity=".25"/>
+          <circle cx="-15" cy="-13" r="2" fill="#00ff88" opacity=".5"/>
+          <circle cx="15" cy="-13" r="2" fill="#00d4ff" opacity=".5"/>
+          <circle cx="-15" cy="13" r="1.6" fill="#00d4ff" opacity=".3"/>
+          <circle cx="15" cy="13" r="1.6" fill="#00ff88" opacity=".3"/>
+          <rect x="-10" y="-8" width="20" height="16" rx="5" fill="rgba(0,229,160,.1)" stroke="url(#ss)" stroke-width="1.2"/>
+          <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="Outfit,system-ui" font-size="11" font-weight="900" fill="#fff" letter-spacing="1.8">AI</text>
+        </g>
+      </svg>
+      <div>
+        <div style="display:inline-block">
+          <div class="gz-name">GZ-AI.-Stacks</div>
+          <div class="gz-line"></div>
+        </div>
+        <div class="gz-sub">Ihr digitaler Bürohelfer</div>
+      </div>
+    </div>
+    <div class="gz-slogan" style="margin-top:8px">KI · Lernprodukte · Software</div>
+  </div>
+  <nav id="nav" role="navigation" aria-label="Hauptnavigation">
+    <div class="nav-item active" data-page="dashboard"><span class="icon">🏠</span> Dashboard</div>
+    <div class="nav-item" data-page="customers"><span class="icon">👥</span> Kunden</div>
+    <div class="nav-item" data-page="quotes"><span class="icon">📋</span> Angebote</div>
+    <div class="nav-item" data-page="invoices"><span class="icon">💶</span> Rechnungen</div>
+    <div class="nav-item" data-page="checklists"><span class="icon">✅</span> Checklisten</div>
+    <div class="nav-item" data-page="zeit"><span class="icon">⏱️</span> Zeiterfassung</div>
+    <div class="nav-item" data-page="templates"><span class="icon">💬</span> Vorlagen</div>
+    <div class="nav-item" data-page="settings"><span class="icon">⚙️</span> Einstellungen</div>
+  </nav>
+  <div class="sidebar-footer" style="display:flex;align-items:center;justify-content:space-between">
+    <span>Pro · v1.2 · Offline</span>
+    <button id="dark-toggle-btn" onclick="toggleDarkMode()" title="Hell/Dunkel umschalten" style="background:rgba(255,255,255,.1);border:none;color:var(--side-text);padding:5px 8px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.18)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🌙</button>
+  </div>
+</aside>
+
+<!-- TOPBAR MOBILE -->
+<div style="flex:1;display:flex;flex-direction:column">
+<div class="topbar">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü öffnen/schließen">☰</button>
+  <h2 id="topbar-title">Dashboard</h2>
+  <div style="width:32px"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content-area" role="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header"><h2>Dashboard</h2></div>
+  <div class="cards" id="dash-cards"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px" class="dash-lists">
+    <div>
+      <h3 style="font-size:15px;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-size:12px">Offene Angebote</h3>
+      <div id="dash-quotes"></div>
+    </div>
+    <div>
+      <h3 style="font-size:12px;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Offene Rechnungen</h3>
+      <div id="dash-invoices"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="page" id="page-customers">
+  <div class="page-header">
+    <h2>Kunden</h2>
+    <button class="btn btn-primary" onclick="openCustomerModal()">+ Neuer Kunde</button>
+  </div>
+  <div class="table-wrap">
+    <div class="table-search">
+      <input class="search-input" placeholder="Suchen..." oninput="filterTable(this,'customers-table')">
+      <span id="customer-count" style="font-size:13px;color:var(--muted)"></span>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="customers-table">
+      <thead><tr>
+        <th>Name / Firma</th><th>Telefon</th><th>E-Mail</th><th>Ort</th><th></th>
+      </tr></thead>
+      <tbody id="customers-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- QUOTES -->
+<div class="page" id="page-quotes">
+  <div class="page-header">
+    <h2>Angebote</h2>
+    <button class="btn btn-primary" onclick="openQuoteModal()">+ Neues Angebot</button>
+  </div>
+  <div class="table-wrap">
+    <div class="table-search">
+      <input class="search-input" placeholder="Suchen..." oninput="filterTable(this,'quotes-table')">
+      <select class="form-control" style="width:auto" onchange="filterStatus(this,'quotes-table')">
+        <option value="">Alle Status</option>
+        <option value="offen">Offen</option>
+        <option value="akzeptiert">Akzeptiert</option>
+        <option value="abgelehnt">Abgelehnt</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="quotes-table">
+      <thead><tr>
+        <th>Nr.</th><th>Kunde</th><th>Betreff</th><th>Datum</th><th>Betrag</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody id="quotes-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICES -->
+<div class="page" id="page-invoices">
+  <div class="page-header">
+    <h2>Rechnungen</h2>
+    <button class="btn btn-primary" onclick="openInvoiceModal()">+ Neue Rechnung</button>
+  </div>
+  <div class="table-wrap">
+    <div class="table-search">
+      <input class="search-input" placeholder="Suchen..." oninput="filterTable(this,'invoices-table')">
+      <select class="form-control" style="width:auto" onchange="filterStatus(this,'invoices-table')">
+        <option value="">Alle Status</option>
+        <option value="offen">Offen</option>
+        <option value="bezahlt">Bezahlt</option>
+        <option value="überfällig">Überfällig</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="invoices-table">
+      <thead><tr>
+        <th>Nr.</th><th>Kunde</th><th>Betreff</th><th>Datum</th><th>Fällig</th><th>Betrag</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody id="invoices-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLISTS -->
+<div class="page" id="page-checklists">
+  <div class="page-header">
+    <h2>Checklisten</h2>
+    <button class="btn btn-primary" onclick="openChecklistModal()">+ Neue Checkliste</button>
+  </div>
+  <div id="checklists-container"></div>
+</div>
+
+<!-- ZEITERFASSUNG -->
+<div class="page" id="page-zeit">
+  <div class="page-header">
+    <h2>Zeiterfassung</h2>
+    <button class="btn btn-primary" onclick="openZeitModal()">+ Manuell erfassen</button>
+  </div>
+  <div class="table-wrap" style="padding:24px;margin-bottom:20px">
+    <div class="timer-display" id="timer-display">00:00:00</div>
+    <div class="timer-btns">
+      <button class="btn btn-primary" id="timer-start-btn" onclick="timerStart()" style="min-width:100px">▶ Start</button>
+      <button class="btn btn-ghost" id="timer-stop-btn" onclick="timerStop()" style="min-width:100px" disabled>⏹ Stop</button>
+    </div>
+    <div class="form-grid" style="max-width:500px;margin:0 auto">
+      <div class="form-group"><label>Kunde</label>
+        <select class="form-control" id="timer-customer"><option value="">– Kein Kunde –</option></select>
+      </div>
+      <div class="form-group"><label>Tätigkeit</label>
+        <input class="form-control" id="timer-desc" placeholder="z.B. Montage, Beratung...">
+      </div>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <div class="table-search">
+      <input class="search-input" placeholder="Suchen..." oninput="filterTable(this,'zeit-table')">
+      <span id="zeit-total-label" style="font-size:13px;color:var(--muted);margin-left:auto"></span>
+      <button class="btn btn-success btn-sm" onclick="zeitToInvoice()" style="margin-left:8px">💶 → Rechnung</button>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="zeit-table">
+      <thead><tr>
+        <th><input type="checkbox" id="zeit-check-all" onchange="toggleAllZeit(this)"></th>
+        <th>Datum</th><th>Kunde</th><th>Tätigkeit</th><th>Dauer</th><th>Std.</th><th></th>
+      </tr></thead>
+      <tbody id="zeit-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="page" id="page-templates">
+  <div class="page-header">
+    <h2>Kommunikations­vorlagen</h2>
+    <button class="btn btn-primary" onclick="openTemplateModal()">+ Neue Vorlage</button>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Platzhalter: {name}, {firma}, {betrag}, {datum}</p>
+  <div id="templates-container"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="page-header"><h2>Einstellungen</h2></div>
+
+  <!-- BACKUP -->
+    <div class="table-wrap" style="padding:20px;margin-bottom:16px">
+    <h3 style="margin-bottom:14px;font-size:15px">&#128242; App installieren (PWA)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Office Life laeuft direkt im Browser und kann wie eine echte App installiert werden &#8211; kein App Store, keine Cloud, keine Anmeldung.</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--surf,rgba(0,0,0,0.04));border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">&#129302; Android &ndash; Chrome</div>
+        <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px;margin:0">
+          <li>Seite in <strong>Chrome</strong> &ouml;ffnen</li>
+          <li>Men&uuml; <strong>&#8942;</strong> (oben rechts) antippen</li>
+          <li><strong>&bdquo;App installieren&ldquo;</strong> oder <strong>&bdquo;Zum Startbildschirm hinzuf&uuml;gen&ldquo;</strong> w&auml;hlen</li>
+          <li>Best&auml;tigen &ndash; das App-Icon erscheint auf dem Startbildschirm &#10003;</li>
+        </ol>
+      </div>
+      <div style="background:var(--surf,rgba(0,0,0,0.04));border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">&#127822; iPhone &amp; iPad &ndash; Safari</div>
+        <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px;margin:0">
+          <li>Seite in <strong>Safari</strong> &ouml;ffnen (andere Browser funktionieren auf iOS nicht)</li>
+          <li>Teilen-Symbol <strong>&#9633;&#8593;</strong> unten in der Leiste antippen</li>
+          <li><strong>&bdquo;Zum Startbildschirm&ldquo;</strong> w&auml;hlen</li>
+          <li>Name best&auml;tigen und auf <strong>&bdquo;Hinzuf&uuml;gen&ldquo;</strong> tippen &#10003;</li>
+        </ol>
+      </div>
+      <div style="background:var(--surf,rgba(0,0,0,0.04));border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">&#128421; Desktop &ndash; Chrome &amp; Edge</div>
+        <ol style="font-size:13px;color:var(--muted);line-height:2;padding-left:18px;margin:0">
+          <li>Seite in <strong>Chrome</strong> oder <strong>Edge</strong> &ouml;ffnen</li>
+          <li>Install-Symbol rechts in der Adressleiste klicken</li>
+          <li>Alternativ: Men&uuml; &rarr; <strong>&bdquo;Office Life installieren&ldquo;</strong></li>
+          <li>Best&auml;tigen &ndash; die App erscheint im Startmen&uuml; &amp; Desktop &#10003;</li>
+        </ol>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px">&#128161; Die App funktioniert nach der Installation vollst&auml;ndig offline &ndash; auch ohne Internetverbindung.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="padding:20px;margin-bottom:16px">
+    <h3 style="margin-bottom:14px;font-size:15px">📦 Datensicherung</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="exportBackup()">⬇️ Backup exportieren</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('import-input').click()">⬆️ Backup importieren</button>
+      <input type="file" id="import-input" accept=".json" style="display:none" onchange="importBackup(this)">
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">Alle Daten (Kunden, Angebote, Rechnungen, Checklisten) als JSON-Datei sichern und wiederherstellen.</p>
+  </div>
+
+  <div class="table-wrap" style="padding:20px;margin-bottom:16px">
+    <h3 style="margin-bottom:12px;font-size:15px">⚖️ Rechtliche Hinweise</h3>
+    <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+      <p><strong>DSGVO / Datenschutz:</strong> Alle Daten werden ausschließlich lokal auf Ihrem Gerät gespeichert (localStorage). Es werden keine Daten an Server übertragen.</p>
+      <p style="margin-top:8px"><strong>Rechnungspflichtangaben (§14 UStG):</strong> Vollständiger Name &amp; Anschrift, Steuernummer/USt-IdNr., Ausstellungsdatum, Rechnungsnummer, Leistungsbeschreibung, Leistungsdatum, Nettobetrag, MwSt-Satz &amp; -betrag, Bruttobetrag.</p>
+      <p style="margin-top:8px"><strong>GoBD-Hinweis:</strong> Bitte archivieren Sie erstellte Rechnungen als PDF. Rechnungen dürfen nachträglich nicht verändert werden.</p>
+      <p style="margin-top:8px"><strong>Kleinunternehmerregelung (§19 UStG):</strong> Wenn zutreffend, geben Sie im Fußnotenfeld an: "Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gem. §19 UStG."</p>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="padding:20px;margin-bottom:16px">
+    <h3 style="margin-bottom:18px;font-size:15px">🎨 Design</h3>
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">Farbthema</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="theme-color-btn" data-color="blau" onclick="setColor('blau')">
+          <span style="width:13px;height:13px;border-radius:50%;background:#2563eb;display:inline-block;flex-shrink:0"></span>Professionell
+        </button>
+        <button class="theme-color-btn" data-color="natur" onclick="setColor('natur')">
+          <span style="width:13px;height:13px;border-radius:50%;background:#16a34a;display:inline-block;flex-shrink:0"></span>Natur
+        </button>
+        <button class="theme-color-btn" data-color="handwerk" onclick="setColor('handwerk')">
+          <span style="width:13px;height:13px;border-radius:50%;background:#ea580c;display:inline-block;flex-shrink:0"></span>Handwerk
+        </button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">Helligkeit</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="theme-mode-btn" data-mode="light" onclick="setMode('light')">☀️ Hell</button>
+        <button class="theme-mode-btn" data-mode="dark" onclick="setMode('dark')">🌙 Dunkel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="padding:24px">
+    <h3 style="margin-bottom:18px;font-size:16px">Firmendaten</h3>
+    <form id="settings-form" class="form-grid">
+      <div class="form-group"><label>Firmenname</label><input class="form-control" id="s-name" placeholder="Musterbau GmbH"></div>
+      <div class="form-group"><label>Inhaber / Ansprechpartner</label><input class="form-control" id="s-owner" placeholder="Max Mustermann"></div>
+      <div class="form-group full"><label>Adresse</label><input class="form-control" id="s-address" placeholder="Musterstraße 1, 12345 Musterstadt"></div>
+      <div class="form-group"><label>Telefon</label><input class="form-control" id="s-phone" placeholder="+49 123 456789"></div>
+      <div class="form-group"><label>E-Mail</label><input class="form-control" id="s-email" placeholder="info@firma.de"></div>
+      <div class="form-group"><label>Website</label><input class="form-control" id="s-web" placeholder="www.firma.de"></div>
+      <div class="form-group"><label>USt-IdNr. / Steuernummer</label><input class="form-control" id="s-tax" placeholder="DE123456789"></div>
+      <div class="form-group"><label>IBAN</label><input class="form-control" id="s-iban" placeholder="DE12 3456 7890 1234 5678 90"></div>
+      <div class="form-group"><label>BIC / Bank</label><input class="form-control" id="s-bank" placeholder="DEUTDEDB / Deutsche Bank"></div>
+      <div class="form-group"><label>MwSt.-Satz (%)</label><input class="form-control" id="s-vat" placeholder="19" type="number"></div>
+      <div class="form-group full"><label>Fußnote Rechnungen</label><textarea class="form-control" id="s-footer" placeholder="Zahlbar innerhalb 14 Tagen ohne Abzug."></textarea></div>
+      <div class="form-group full">
+        <label>Firmenlogo</label>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <img id="logo-preview" src="" alt="" style="max-height:64px;max-width:200px;display:none;border-radius:6px;border:1px solid var(--border);padding:4px">
+          <div>
+            <input type="file" id="s-logo-input" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+            <button type="button" class="btn btn-ghost" onclick="document.getElementById('s-logo-input').click()">📁 Logo hochladen</button>
+            <button type="button" class="btn btn-danger btn-sm" id="logo-delete-btn" onclick="deleteLogo()" style="display:none;margin-left:8px">Entfernen</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:6px">PNG, JPG oder SVG · Empfohlen: max. 400×150px</p>
+      </div>
+      <div class="form-group full">
+        <button type="submit" class="btn btn-primary" style="width:fit-content">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /flex -->
+</div><!-- /layout -->
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+
+<!-- PRINT AREA -->
+<div id="print-area" style="display:none"></div>
+
+<div class="zoom-indicator" id="zoom-indicator"></div>
+
+<script>
+// ===== DB =====
+const DB = {
+  load: k => JSON.parse(localStorage.getItem('msk_'+k)||'[]'),
+  save: (k,v) => localStorage.setItem('msk_'+k, JSON.stringify(v)),
+  loadObj: k => JSON.parse(localStorage.getItem('msk_'+k)||'{}'),
+  saveObj: (k,v) => localStorage.setItem('msk_'+k, JSON.stringify(v)),
+};
+
+// ===== STATE =====
+let state = {
+  customers: DB.load('customers'),
+  quotes: DB.load('quotes'),
+  invoices: DB.load('invoices'),
+  checklists: DB.load('checklists'),
+  templates: DB.load('templates'),
+  zeit: DB.load('zeit'),
+  settings: DB.loadObj('settings'),
+};
+
+function save(key){ DB.save(key, state[key]); }
+function saveSettings(){ DB.saveObj('settings', state.settings); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+// ===== ROUTER =====
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  document.getElementById('topbar-title').textContent = {
+    dashboard:'Dashboard',customers:'Kunden',quotes:'Angebote',
+    invoices:'Rechnungen',checklists:'Checklisten',zeit:'Zeiterfassung',
+    templates:'Vorlagen',settings:'Einstellungen'
+  }[page];
+  render(page);
+  closeSidebar();
+}
+
+document.getElementById('nav').addEventListener('click', e=>{
+  const item = e.target.closest('.nav-item');
+  if(item) navigate(item.dataset.page);
+});
+
+// ===== SIDEBAR TOGGLE =====
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); }
+
+// ===== TOAST =====
+function toast(msg, dur=2500){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// ===== MODAL =====
+function openModal(html){
+  document.getElementById('modal').innerHTML = html.replace('<h3>', '<h3 id="modal-title">');
+  document.getElementById('overlay').classList.add('show');
+  // Focus first focusable element
+  setTimeout(()=>{
+    const el = document.getElementById('modal').querySelector('button,input,select,textarea,[tabindex]');
+    if(el) el.focus();
+  }, 50);
+}
+function closeModal(e){
+  if(!e||e.target===document.getElementById('overlay'))
+    document.getElementById('overlay').classList.remove('show');
+}
+function forceClose(){ document.getElementById('overlay').classList.remove('show'); }
+
+// ===== FILTER =====
+function filterTable(input, tableId){
+  const q=input.value.toLowerCase();
+  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{
+    tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+function filterStatus(sel, tableId){
+  const q=sel.value.toLowerCase();
+  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{
+    tr.style.display=(!q||tr.textContent.toLowerCase().includes(q))?'':'none';
+  });
+}
+
+// ===== FORMAT =====
+function fmt(n){ return Number(n||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function fmtDate(d){ if(!d) return '–'; const dt=new Date(d); return dt.toLocaleDateString('de-DE'); }
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function addDays(d,n){ const dt=new Date(d); dt.setDate(dt.getDate()+n); return dt.toISOString().split('T')[0]; }
+
+function statusBadge(s){
+  const map={
+    offen:'badge-yellow',akzeptiert:'badge-green',abgelehnt:'badge-red',
+    bezahlt:'badge-green',überfällig:'badge-red',entwurf:'badge-gray'
+  };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+
+function getCustomerName(id){
+  const c=state.customers.find(x=>x.id===id);
+  return c ? (c.company||c.name) : '–';
+}
+
+// ===== RENDER =====
+function render(page){
+  if(page==='dashboard') renderDashboard();
+  else if(page==='customers') renderCustomers();
+  else if(page==='quotes') renderQuotes();
+  else if(page==='invoices') renderInvoices();
+  else if(page==='checklists') renderChecklists();
+  else if(page==='zeit') renderZeit();
+  else if(page==='templates') renderTemplates();
+  else if(page==='settings') renderSettings();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const openQ = state.quotes.filter(q=>q.status==='offen').length;
+  const openI = state.invoices.filter(i=>i.status==='offen'||i.status==='überfällig');
+  const openIAmt = openI.reduce((s,i)=>s+calcTotal(i.items,i.vat||19),0);
+  const totalCust = state.customers.length;
+  const paidAmt = state.invoices.filter(i=>i.status==='bezahlt').reduce((s,i)=>s+calcTotal(i.items,i.vat||19),0);
+
+  document.getElementById('dash-cards').innerHTML = `
+    <div class="stat-card" style="cursor:pointer" onclick="navigate('customers')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+      <div class="label">Kunden</div><div class="value">${totalCust}</div><div class="sub">gesamt →</div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="navigate('quotes')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+      <div class="label">Offene Angebote</div><div class="value">${openQ}</div><div class="sub">warten auf Antwort →</div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="navigate('invoices')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+      <div class="label">Offene Forderungen</div><div class="value" style="color:var(--warn)">${fmt(openIAmt)}</div><div class="sub">${openI.length} Rechnung(en) →</div>
+    </div>
+    <div class="stat-card" style="cursor:pointer" onclick="navigate('invoices')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+      <div class="label">Eingenommen</div><div class="value" style="color:var(--ok)">${fmt(paidAmt)}</div><div class="sub">bezahlte Rechnungen →</div>
+    </div>
+  `;
+
+  const qList = state.quotes.filter(q=>q.status==='offen').slice(0,5);
+  document.getElementById('dash-quotes').innerHTML = qList.length ?
+    qList.map(q=>`
+      <div onclick="viewQuote('${q.id}')" style="padding:10px 14px;background:var(--surf);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.06);cursor:pointer;transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 3px 10px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.06)'" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:600;font-size:14px">${q.subject}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--warn)">${fmt(calcTotal(q.items,q.vat||19))}</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${getCustomerName(q.customerId)} · ${fmtDate(q.date)}</div>
+      </div>`).join('') :
+    '<div style="font-size:13px;color:var(--muted)">Keine offenen Angebote</div>';
+
+  const iList = state.invoices.filter(i=>i.status!=='bezahlt').slice(0,5);
+  document.getElementById('dash-invoices').innerHTML = iList.length ?
+    iList.map(i=>`
+      <div onclick="viewInvoice('${i.id}')" style="padding:10px 14px;background:var(--surf);border-radius:8px;margin-bottom:8px;border-left:3px solid ${i.status==='überfällig'?'var(--danger)':'var(--p)'};box-shadow:0 1px 3px rgba(0,0,0,.06);cursor:pointer;transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 3px 10px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.06)'" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:600;font-size:14px">${i.invoiceNr}</div>
+          <div style="font-size:13px;font-weight:600;color:${i.status==='überfällig'?'var(--danger)':'var(--p)'}">${fmt(calcTotal(i.items,i.vat||19))}</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${getCustomerName(i.customerId)} · Fällig: ${fmtDate(i.dueDate)} ${i.status==='überfällig'?'⚠️':''}</div>
+      </div>`).join('') :
+    '<div style="font-size:13px;color:var(--ok)">✓ Alle Rechnungen bezahlt</div>';
+}
+// ===== CUSTOMERS =====
+function renderCustomers(){
+  const list = state.customers;
+  document.getElementById('customer-count').textContent = list.length+' Einträge';
+  document.getElementById('customers-body').innerHTML = list.length ? list.map(c=>`
+    <tr onclick="viewCustomer('${c.id}',event)" style="cursor:pointer" tabindex="0" aria-label="Kunde ${c.company||c.name} anzeigen">
+      <td><div style="font-weight:600">${c.company||c.name}</div>${c.company?'<div style="font-size:12px;color:var(--muted)">'+c.name+'</div>':''}</td>
+      <td>${c.phone||'–'}</td>
+      <td>${c.email||'–'}</td>
+      <td>${c.city||'–'}</td>
+      <td class="td-actions">
+        <button class="btn-icon btn-sm" onclick="openCustomerModal('${c.id}')" aria-label="Bearbeiten">✏️</button>
+        <button class="btn-icon btn-sm btn-danger" onclick="deleteCustomer('${c.id}')" aria-label="Löschen">🗑️</button>
+      </td>
+    </tr>`).join('') :
+    '<tr><td colspan="5"><div class="empty"><div class="icon">👥</div><p>Noch keine Kunden angelegt</p></div></td></tr>';
+}
+
+function openCustomerModal(id){
+  const c = id ? state.customers.find(x=>x.id===id) : {};
+  openModal(`
+    <div class="modal-header"><h3>${id?'Kunde bearbeiten':'Neuer Kunde'}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Firmenname</label><input class="form-control" id="c-company" value="${c.company||''}"></div>
+      <div class="form-group full"><label>Ansprechpartner</label><input class="form-control" id="c-name" value="${c.name||''}"></div>
+      <div class="form-group"><label>Telefon</label><input class="form-control" id="c-phone" value="${c.phone||''}"></div>
+      <div class="form-group"><label>E-Mail</label><input class="form-control" id="c-email" value="${c.email||''}"></div>
+      <div class="form-group full"><label>Adresse</label><input class="form-control" id="c-address" value="${c.address||''}"></div>
+      <div class="form-group"><label>PLZ</label><input class="form-control" id="c-zip" value="${c.zip||''}"></div>
+      <div class="form-group"><label>Ort</label><input class="form-control" id="c-city" value="${c.city||''}"></div>
+      <div class="form-group full"><label>Notizen</label><textarea class="form-control" id="c-notes">${c.notes||''}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveCustomer('${id||''}')">Speichern</button>
+    </div>
+  `);
+}
+
+function saveCustomer(id){
+  const c = {
+    id: id||uid(),
+    company: document.getElementById('c-company').value.trim(),
+    name: document.getElementById('c-name').value.trim(),
+    phone: document.getElementById('c-phone').value.trim(),
+    email: document.getElementById('c-email').value.trim(),
+    address: document.getElementById('c-address').value.trim(),
+    zip: document.getElementById('c-zip').value.trim(),
+    city: document.getElementById('c-city').value.trim(),
+    notes: document.getElementById('c-notes').value.trim(),
+  };
+  if(!c.company&&!c.name){ toast('Bitte Name oder Firma eingeben'); return; }
+  if(id) { const i=state.customers.findIndex(x=>x.id===id); state.customers[i]=c; }
+  else state.customers.push(c);
+  save('customers'); forceClose(); renderCustomers(); toast('Kunde gespeichert ✓');
+}
+
+function deleteCustomer(id){
+  if(!confirm('Kunde wirklich löschen?')) return;
+  state.customers=state.customers.filter(x=>x.id!==id);
+  save('customers'); renderCustomers(); toast('Kunde gelöscht');
+}
+
+function viewCustomer(id, e){
+  if(e && e.target.closest('.td-actions')) return;
+  const c = state.customers.find(x=>x.id===id);
+  if(!c){ toast('Kunde nicht gefunden'); return; }
+  const cQuotes = state.quotes.filter(x=>x.customerId===id);
+  const cInvoices = state.invoices.filter(x=>x.customerId===id);
+
+  const TD = 'padding:8px 10px;border-bottom:1px solid #e2e8f0;color:#1e293b;font-size:14px';
+  const TH = 'padding:7px 10px;background:#f1f5f9;border-bottom:2px solid #e2e8f0;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px';
+
+  const quoteRows = cQuotes.length ? cQuotes.map(function(q){
+    const qid = q.id;
+    return '<tr onclick="forceClose();setTimeout(function(){viewQuote(\'' + qid + '\',null)},80)" style="cursor:pointer" onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'\'">'
+      + '<td style="' + TD + '">' + q.quoteNr + '</td>'
+      + '<td style="' + TD + '">' + (q.subject||'–') + '</td>'
+      + '<td style="' + TD + '">' + statusBadge(q.status) + '</td>'
+      + '<td style="' + TD + ';text-align:right;font-weight:600">' + fmt(calcTotal(q.items,q.vat)) + '</td>'
+      + '</tr>';
+  }).join('') : '<tr><td colspan="4" style="padding:10px;color:#94a3b8;text-align:center;font-size:13px">Keine Angebote vorhanden</td></tr>';
+
+  const invRows = cInvoices.length ? cInvoices.map(function(inv){
+    const iid = inv.id;
+    return '<tr onclick="forceClose();setTimeout(function(){viewInvoice(\'' + iid + '\',null)},80)" style="cursor:pointer" onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'\'">'
+      + '<td style="' + TD + '">' + inv.invoiceNr + '</td>'
+      + '<td style="' + TD + '">' + (inv.subject||'–') + '</td>'
+      + '<td style="' + TD + '">' + statusBadge(inv.status) + '</td>'
+      + '<td style="' + TD + ';text-align:right;font-weight:600">' + fmt(calcTotal(inv.items,inv.vat)) + '</td>'
+      + '</tr>';
+  }).join('') : '<tr><td colspan="4" style="padding:10px;color:#94a3b8;text-align:center;font-size:13px">Keine Rechnungen vorhanden</td></tr>';
+
+  const eid = id;
+  openModal(
+    '<div class="modal-header">'
+    + '<h3>' + (c.company||c.name) + '</h3>'
+    + '<button class="modal-close" onclick="forceClose()">×</button>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">'
+    + '<div style="background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0">'
+    + '<div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Kontakt</div>'
+    + (c.name ? '<div style="font-weight:700;font-size:15px;color:#111827">' + c.name + '</div>' : '')
+    + (c.company && c.name ? '<div style="color:#374151;font-size:13px;margin-top:2px">' + c.company + '</div>' : '')
+    + (!c.name && c.company ? '<div style="font-weight:700;font-size:15px;color:#111827">' + c.company + '</div>' : '')
+    + (c.phone ? '<div style="color:#374151;font-size:13px;margin-top:6px">📞 ' + c.phone + '</div>' : '')
+    + (c.email ? '<div style="color:#374151;font-size:13px;margin-top:2px">✉️ ' + c.email + '</div>' : '')
+    + '</div>'
+    + '<div style="background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0">'
+    + '<div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Adresse</div>'
+    + (c.address ? '<div style="color:#374151;font-size:13px">' + c.address + '</div>' : '')
+    + ((c.zip||c.city) ? '<div style="color:#374151;font-size:13px;margin-top:2px">' + (c.zip||'') + ' ' + (c.city||'') + '</div>' : '')
+    + (!c.address && !c.zip && !c.city ? '<div style="color:#94a3b8;font-size:13px">Keine Adresse angegeben</div>' : '')
+    + '</div>'
+    + '</div>'
+    + (c.notes ? '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:#92400e"><strong>📝 Notizen:</strong> ' + c.notes + '</div>' : '')
+    + '<div style="margin-bottom:14px">'
+    + '<div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Angebote <span style="color:#94a3b8;font-weight:400">(' + cQuotes.length + ')</span></div>'
+    + '<table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden"><thead><tr>'
+    + '<th style="' + TH + '">Nr.</th>'
+    + '<th style="' + TH + '">Betreff</th>'
+    + '<th style="' + TH + '">Status</th>'
+    + '<th style="' + TH + ';text-align:right">Betrag</th>'
+    + '</tr></thead><tbody>' + quoteRows + '</tbody></table>'
+    + '</div>'
+    + '<div style="margin-bottom:8px">'
+    + '<div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Rechnungen <span style="color:#94a3b8;font-weight:400">(' + cInvoices.length + ')</span></div>'
+    + '<table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden"><thead><tr>'
+    + '<th style="' + TH + '">Nr.</th>'
+    + '<th style="' + TH + '">Betreff</th>'
+    + '<th style="' + TH + '">Status</th>'
+    + '<th style="' + TH + ';text-align:right">Betrag</th>'
+    + '</tr></thead><tbody>' + invRows + '</tbody></table>'
+    + '</div>'
+    + '<div class="modal-footer">'
+    + '<button class="btn btn-ghost" onclick="forceClose()">Schließen</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="forceClose();setTimeout(function(){openCustomerModal(\'' + eid + '\')},80)">✏️ Bearbeiten</button>'
+    + '<button class="btn btn-primary btn-sm" onclick="forceClose();setTimeout(function(){navigate(\'quotes\');openQuoteModal(null,\'' + eid + '\')},80)">+ Angebot</button>'
+    + '<button class="btn btn-primary btn-sm" onclick="forceClose();setTimeout(function(){navigate(\'invoices\');openInvoiceModal(null,\'' + eid + '\')},80)">+ Rechnung</button>'
+    + '</div>'
+  );
+}
+
+// ===== ITEMS HELPER =====
+function calcTotal(items, vat){
+  const net=(items||[]).reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0);
+  return net*(1+(parseFloat(vat)||19)/100);
+}
+function calcNet(items){
+  return (items||[]).reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0);
+}
+
+function renderItemsTable(items){
+  return `
+    <table class="items-table" id="items-tbl">
+      <thead><tr><th style="width:45%">Beschreibung</th><th style="width:12%">Menge</th><th style="width:12%">Einheit</th><th style="width:15%">Preis (€)</th><th style="width:12%">Gesamt</th><th style="width:4%"></th></tr></thead>
+      <tbody id="items-body">
+        ${(items||[{desc:'',qty:1,unit:'Stk.',price:''}]).map((it,i)=>itemRow(it,i)).join('')}
+      </tbody>
+    </table>
+    <button class="btn btn-ghost btn-sm" onclick="addItemRow()" style="margin-top:6px">+ Position hinzufügen</button>
+    <div class="items-total" id="items-total"></div>
+  `;
+}
+
+function itemRow(it,i){
+  return `<tr id="irow-${i}" data-idx="${i}">
+    <td><input value="${it.desc||''}" oninput="updateItem(${i},'desc',this.value)" placeholder="Leistung / Material"></td>
+    <td><input type="number" value="${it.qty||1}" min="0" step="any" oninput="updateItem(${i},'qty',this.value)" style="text-align:right"></td>
+    <td><input value="${it.unit||'Stk.'}" oninput="updateItem(${i},'unit',this.value)"></td>
+    <td><input type="number" value="${it.price||''}" min="0" step="any" oninput="updateItem(${i},'price',this.value)" style="text-align:right" placeholder="0.00"></td>
+    <td id="irow-tot-${i}" style="text-align:right;font-size:13px;padding-right:6px"></td>
+    <td><button onclick="removeItemRow(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">×</button></td>
+  </tr>`;
+}
+
+let _items = [];
+function initItems(items){ _items = JSON.parse(JSON.stringify(items||[{desc:'',qty:1,unit:'Stk.',price:''}])); updateItemTotals(); }
+function updateItem(i,k,v){ if(_items[i]) { _items[i][k]=v; updateItemTotals(); } }
+function addItemRow(){
+  const i=_items.length; _items.push({desc:'',qty:1,unit:'Stk.',price:''});
+  const tbody=document.getElementById('items-body');
+  const tr=document.createElement('tr'); tr.innerHTML=itemRow({desc:'',qty:1,unit:'Stk.',price:''},i).replace(/^<tr[^>]*>/,'').replace(/<\/tr>$/,'');
+  const row=document.createElement('tr'); row.id='irow-'+i; row.dataset.idx=i;
+  row.innerHTML=itemRow({desc:'',qty:1,unit:'Stk.',price:''},i).replace(/^<tr[^>]*>/,'').replace(/<\/tr>$/,'');
+  // just re-render tbody
+  document.getElementById('items-body').innerHTML=_items.map((it,idx)=>itemRow(it,idx)).join('');
+  updateItemTotals();
+  setTimeout(()=>{ const inputs=document.querySelectorAll('#items-body tr:last-child input'); if(inputs[0]) inputs[0].focus(); },50);
+}
+function removeItemRow(i){
+  if(_items.length<=1) return;
+  _items.splice(i,1);
+  document.getElementById('items-body').innerHTML=_items.map((it,idx)=>itemRow(it,idx)).join('');
+  updateItemTotals();
+}
+function updateItemTotals(){
+  _items.forEach((it,i)=>{
+    const cell=document.getElementById('irow-tot-'+i);
+    if(cell) cell.textContent=fmt((parseFloat(it.qty)||0)*(parseFloat(it.price)||0));
+  });
+  const vat=parseFloat(document.getElementById('doc-vat')?.value||state.settings.vat||19);
+  const net=calcNet(_items);
+  const vatAmt=net*vat/100;
+  const gross=net+vatAmt;
+  const el=document.getElementById('items-total');
+  if(el) el.innerHTML=`
+    <div class="total-row"><span>Netto:</span><span>${fmt(net)}</span></div>
+    <div class="total-row"><span>MwSt. ${vat}%:</span><span>${fmt(vatAmt)}</span></div>
+    <div class="total-row" style="font-size:16px;border-top:1px solid var(--border);padding-top:6px;margin-top:4px"><span>Gesamt:</span><span style="color:var(--p)">${fmt(gross)}</span></div>
+  `;
+}
+
+// ===== QUOTES =====
+function getNextQNr(){
+  const nums=state.quotes.map(q=>parseInt(q.quoteNr?.replace(/\D/g,''))||0);
+  const max=Math.max(0,...nums);
+  const year=new Date().getFullYear();
+  return 'A-'+year+'-'+String(max+1).padStart(3,'0');
+}
+
+function renderQuotes(){
+  document.getElementById('quotes-body').innerHTML = state.quotes.length ? state.quotes.map(q=>`
+    <tr data-status="${q.status}" style="cursor:pointer" onclick="viewQuote('${q.id}',event)">
+      <td style="font-weight:600">${q.quoteNr}</td>
+      <td>${getCustomerName(q.customerId)}</td>
+      <td>${q.subject}</td>
+      <td>${fmtDate(q.date)}</td>
+      <td style="text-align:right;font-weight:600">${fmt(calcTotal(q.items,q.vat||19))}</td>
+      <td>${statusBadge(q.status)}</td>
+      <td class="td-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon btn-sm" onclick="printDoc('quote','${q.id}')" title="Drucken/PDF" aria-label="Drucken">🖨️</button>
+        <button class="btn-icon btn-sm" onclick="quoteToInvoice('${q.id}')" title="→ Rechnung" aria-label="Als Rechnung übernehmen">💶</button>
+        <button class="btn-icon btn-sm" onclick="cycleStatus('quote','${q.id}')" title="Status ändern" aria-label="Status ändern">🔄</button>
+        <button class="btn-icon btn-sm" onclick="openQuoteModal('${q.id}')" aria-label="Bearbeiten">✏️</button>
+        <button class="btn-icon btn-sm btn-danger" onclick="deleteDoc('quote','${q.id}')" aria-label="Löschen">🗑️</button>
+      </td>
+    </tr>`).join('') :
+    '<tr><td colspan="7"><div class="empty"><div class="icon">📋</div><p>Noch keine Angebote erstellt</p></div></td></tr>';
+}
+
+function viewQuote(id, e){
+  if(e && e.target.closest('.td-actions')) return;
+  const q=state.quotes.find(x=>x.id===id);
+  const customer=state.customers.find(x=>x.id===q.customerId)||{};
+  const net=calcNet(q.items);
+  const vat=q.vat||19;
+  const vatAmt=net*vat/100;
+  const gross=net+vatAmt;
+  const posRows=(q.items||[]).filter(it=>it.desc||it.price).map(it=>{
+    const tot=(parseFloat(it.qty)||0)*(parseFloat(it.price)||0);
+    return '<tr>'
+      +'<td style="padding:8px 10px;border-bottom:1px solid var(--border)">'+(it.desc||'')+'</td>'
+      +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+(it.qty||1)+'</td>'
+      +'<td style="padding:8px 10px;border-bottom:1px solid var(--border)">'+(it.unit||'Stk.')+'</td>'
+      +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+fmt(it.price||0)+'</td>'
+      +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right;font-weight:600">'+fmt(tot)+'</td>'
+      +'</tr>';
+  }).join('');
+  openModal(
+    '<div class="modal-header">'
+    +'<div><h3>'+q.quoteNr+' – '+q.subject+'</h3>'
+    +'<div style="margin-top:4px">'+statusBadge(q.status)+'</div></div>'
+    +'<button class="modal-close" onclick="forceClose()">×</button>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:var(--bg);border-radius:8px;padding:14px">'
+    +'<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Kunde</div>'
+    +'<div style="font-weight:600;font-size:15px">'+(customer.company||customer.name||'–')+'</div>'
+    +(customer.company&&customer.name?'<div style="font-size:13px;color:var(--muted)">'+customer.name+'</div>':'')
+    +(customer.phone?'<div style="font-size:12px;color:var(--muted);margin-top:4px">📞 '+customer.phone+'</div>':'')
+    +(customer.email?'<div style="font-size:12px;color:var(--muted)">✉️ '+customer.email+'</div>':'')
+    +'</div>'
+    +'<div style="background:var(--bg);border-radius:8px;padding:14px">'
+    +'<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Details</div>'
+    +'<div style="font-size:13px;margin-bottom:4px">📅 Datum: <strong>'+fmtDate(q.date)+'</strong></div>'
+    +'<div style="font-size:13px">🔖 Nr.: <strong>'+q.quoteNr+'</strong></div>'
+    +'</div>'
+    +'</div>'
+    +'<div style="overflow-x:auto;margin-bottom:12px">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:13px">'
+    +'<thead><tr style="background:var(--bg)">'
+    +'<th style="padding:8px 10px;text-align:left;border-bottom:2px solid var(--border);font-size:12px;color:var(--muted)">Beschreibung</th>'
+    +'<th style="padding:8px 10px;text-align:right;border-bottom:2px solid var(--border);font-size:12px;color:var(--muted)">Menge</th>'
+    +'<th style="padding:8px 10px;border-bottom:2px solid var(--border);font-size:12px;color:var(--muted)">Einh.</th>'
+    +'<th style="padding:8px 10px;text-align:right;border-bottom:2px solid var(--border);font-size:12px;color:var(--muted)">Preis</th>'
+    +'<th style="padding:8px 10px;text-align:right;border-bottom:2px solid var(--border);font-size:12px;color:var(--muted)">Gesamt</th>'
+    +'</tr></thead><tbody>'+posRows+'</tbody></table></div>'
+    +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:14px;background:var(--bg);border-radius:8px;margin-bottom:16px">'
+    +'<div style="display:flex;gap:32px;font-size:13px"><span style="color:var(--muted)">Netto:</span><span style="min-width:100px;text-align:right">'+fmt(net)+'</span></div>'
+    +'<div style="display:flex;gap:32px;font-size:13px"><span style="color:var(--muted)">MwSt. '+vat+'%:</span><span style="min-width:100px;text-align:right">'+fmt(vatAmt)+'</span></div>'
+    +'<div style="display:flex;gap:32px;font-size:18px;font-weight:700;color:var(--p);border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span>Gesamt:</span><span style="min-width:100px;text-align:right">'+fmt(gross)+'</span></div>'
+    +'</div>'
+    +'<div class="modal-footer">'
+    +'<button class="btn btn-ghost" onclick="forceClose()">Schließen</button>'
+    +'<button class="btn btn-ghost" onclick="forceClose();openQuoteModal(\''+id+'\')">✏️ Bearbeiten</button>'
+    +'<button class="btn btn-success" onclick="forceClose();quoteToInvoice(\''+id+'\')">💶 → Rechnung</button>'
+    +'<button class="btn btn-primary" onclick="printDoc(\'quote\',\''+id+'\')">🖨️ Drucken</button>'
+    +'</div>'
+  );
+}
+
+function openQuoteModal(id){
+  const q=id?state.quotes.find(x=>x.id===id):{};
+  const custOptions=state.customers.map(c=>`<option value="${c.id}" ${q.customerId===c.id?'selected':''}>${c.company||c.name}</option>`).join('');
+  const vat = q.vat||state.settings.vat||19;
+  openModal(`
+    <div class="modal-header"><h3>${id?'Angebot bearbeiten':'Neues Angebot'}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group"><label>Angebots-Nr.</label><input class="form-control" id="doc-nr" value="${q.quoteNr||getNextQNr()}"></div>
+      <div class="form-group"><label>Datum</label><input class="form-control" type="date" id="doc-date" value="${q.date||todayStr()}"></div>
+      <div class="form-group"><label>Kunde</label><select class="form-control" id="doc-customer"><option value="">– Kunde wählen –</option>${custOptions}</select></div>
+      <div class="form-group"><label>MwSt. (%)</label><input class="form-control" type="number" id="doc-vat" value="${vat}" oninput="updateItemTotals()"></div>
+      <div class="form-group full"><label>Betreff</label><input class="form-control" id="doc-subject" value="${q.subject||''}"></div>
+      <div class="form-group full"><label>Einleitungstext</label><textarea class="form-control" id="doc-intro">${q.intro||'vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:'}</textarea></div>
+    </div>
+    <label style="font-size:13px;font-weight:600">Positionen</label>
+    ${renderItemsTable(q.items)}
+    <div class="form-group full" style="margin-top:16px"><label>Schlusstext</label><textarea class="form-control" id="doc-outro">${q.outro||'Bei Fragen stehen wir Ihnen gerne zur Verfügung. Wir freuen uns auf Ihren Auftrag.'}</textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveQuote('${id||''}')">Speichern</button>
+    </div>
+  `);
+  initItems(q.items);
+}
+
+function saveQuote(id){
+  const customerId=document.getElementById('doc-customer').value;
+  const subject=document.getElementById('doc-subject').value.trim();
+  if(!subject){ toast('Bitte Betreff eingeben'); return; }
+  const q={
+    id:id||uid(), quoteNr:document.getElementById('doc-nr').value.trim(),
+    customerId, subject,
+    date:document.getElementById('doc-date').value,
+    vat:parseFloat(document.getElementById('doc-vat').value)||19,
+    intro:document.getElementById('doc-intro').value,
+    outro:document.getElementById('doc-outro').value,
+    items:JSON.parse(JSON.stringify(_items)),
+    status:id?(state.quotes.find(x=>x.id===id)?.status||'offen'):'offen',
+  };
+  if(id){ const i=state.quotes.findIndex(x=>x.id===id); state.quotes[i]=q; }
+  else state.quotes.push(q);
+  save('quotes'); forceClose(); renderQuotes(); toast('Angebot gespeichert ✓');
+}
+
+function cycleStatus(type, id){
+  if(type==='quote'){
+    const q=state.quotes.find(x=>x.id===id);
+    const cycle=['offen','akzeptiert','abgelehnt'];
+    q.status=cycle[(cycle.indexOf(q.status)+1)%cycle.length];
+    save('quotes'); renderQuotes();
+  } else {
+    const inv=state.invoices.find(x=>x.id===id);
+    const cycle=['offen','bezahlt','überfällig'];
+    inv.status=cycle[(cycle.indexOf(inv.status)+1)%cycle.length];
+    save('invoices'); renderInvoices();
+  }
+}
+
+function deleteDoc(type, id){
+  if(!confirm('Wirklich löschen?')) return;
+  state[type+'s']=state[type+'s'].filter(x=>x.id!==id);
+  save(type+'s'); render(type+'s'); toast('Gelöscht');
+}
+
+function quoteToInvoice(qid){
+  const q=state.quotes.find(x=>x.id===qid);
+  if(!q){ toast('Angebot nicht gefunden'); return; }
+  // open invoice modal pre-filled
+  openInvoiceModal(null, q);
+  toast('Angebot übernommen – bitte prüfen und speichern');
+}
+
+// ===== INVOICES =====
+function getNextINr(){
+  const nums=state.invoices.map(i=>parseInt(i.invoiceNr?.replace(/\D/g,''))||0);
+  const max=Math.max(0,...nums);
+  const year=new Date().getFullYear();
+  return 'R-'+year+'-'+String(max+1).padStart(3,'0');
+}
+
+function renderInvoices(){
+  document.getElementById('invoices-body').innerHTML = state.invoices.length ? state.invoices.map(inv=>`
+    <tr data-status="${inv.status}" onclick="viewInvoice('${inv.id}',event)" style="cursor:pointer">
+      <td style="font-weight:600">${inv.invoiceNr}</td>
+      <td>${getCustomerName(inv.customerId)}</td>
+      <td>${inv.subject}</td>
+      <td>${fmtDate(inv.date)}</td>
+      <td style="color:${inv.status==='überfällig'?'var(--danger)':'inherit'}">${fmtDate(inv.dueDate)}</td>
+      <td style="text-align:right;font-weight:600">${fmt(calcTotal(inv.items,inv.vat||19))}</td>
+      <td>${statusBadge(inv.status)}</td>
+      <td class="td-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon btn-sm" onclick="printDoc('invoice','${inv.id}')" title="Drucken/PDF" aria-label="Drucken">🖨️</button>
+        <button class="btn-icon btn-sm" onclick="cycleStatus('invoice','${inv.id}')" title="Status ändern" aria-label="Status ändern">🔄</button>
+        <button class="btn-icon btn-sm" onclick="openInvoiceModal('${inv.id}')" aria-label="Bearbeiten">✏️</button>
+        <button class="btn-icon btn-sm btn-danger" onclick="deleteDoc('invoice','${inv.id}')" aria-label="Löschen">🗑️</button>
+      </td>
+    </tr>`).join('') :
+    '<tr><td colspan="8"><div class="empty"><div class="icon">💶</div><p>Noch keine Rechnungen erstellt</p></div></td></tr>';
+}
+
+function viewInvoice(id, e){
+  if(e && e.target.closest('.td-actions')) return;
+  const inv = state.invoices.find(x=>x.id===id);
+  if(!inv){ toast('Rechnung nicht gefunden'); return; }
+  const customer = state.customers.find(x=>x.id===inv.customerId)||{};
+  const s = state.settings;
+  const net = calcNet(inv.items);
+  const vat = inv.vat||19;
+  const vatAmt = net*vat/100;
+  const gross = net+vatAmt;
+  const isPaid = inv.status==='bezahlt';
+  const isOverdue = inv.status==='überfällig';
+  const totalColor = isPaid ? 'var(--success,#16a34a)' : 'var(--primary,#2563eb)';
+
+  const overdueWarning = isOverdue
+    ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;margin-bottom:16px;color:#dc2626;font-weight:600">⚠️ Zahlung überfällig!</div>'
+    : '';
+
+  const dueDateStyle = isOverdue ? 'color:#dc2626;font-weight:600' : '';
+
+  const posRows = (inv.items||[]).map(function(it){
+    const total = (parseFloat(it.qty)||0)*(parseFloat(it.price)||0);
+    return '<tr>'
+      + '<td style="padding:8px 10px;border-bottom:1px solid #e2e8f0">' + (it.desc||'') + '</td>'
+      + '<td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:right">' + (it.qty||'') + '</td>'
+      + '<td style="padding:8px 10px;border-bottom:1px solid #e2e8f0">' + (it.unit||'') + '</td>'
+      + '<td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:right">' + fmt(it.price) + '</td>'
+      + '<td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:600">' + fmt(total) + '</td>'
+      + '</tr>';
+  }).join('');
+
+  const markPaidBtn = !isPaid
+    ? '<button class="btn btn-primary" onclick="markPaid(\'' + id + '\')">✓ Als bezahlt markieren</button>'
+    : '';
+
+  openModal(
+    '<div class="modal-header">'
+    + '<h3>' + inv.invoiceNr + (inv.subject ? ' – ' + inv.subject : '') + '</h3>'
+    + '<button class="modal-close" onclick="forceClose()">×</button>'
+    + '</div>'
+    + '<div style="padding:0 4px">'
+    + '<div style="margin-bottom:14px">' + statusBadge(inv.status) + '</div>'
+    + overdueWarning
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">'
+    + '<div style="background:#f8fafc;border-radius:8px;padding:14px">'
+    + '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Kunde</div>'
+    + '<div style="font-weight:600;font-size:14px">' + (customer.name||'–') + '</div>'
+    + (customer.company ? '<div style="color:#475569;font-size:13px">' + customer.company + '</div>' : '')
+    + (customer.phone ? '<div style="color:#475569;font-size:13px">📞 ' + customer.phone + '</div>' : '')
+    + (customer.email ? '<div style="color:#475569;font-size:13px">✉️ ' + customer.email + '</div>' : '')
+    + '</div>'
+    + '<div style="background:#f8fafc;border-radius:8px;padding:14px">'
+    + '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Rechnungsdetails</div>'
+    + '<div style="font-size:13px;color:#475569;line-height:1.8">'
+    + '<span style="font-weight:600">Datum:</span> ' + fmtDate(inv.date) + '<br>'
+    + '<span style="font-weight:600">Fällig:</span> <span style="' + dueDateStyle + '">' + fmtDate(inv.dueDate) + '</span><br>'
+    + (s.iban ? '<span style="font-weight:600">IBAN:</span> ' + s.iban : '')
+    + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
+    + '<thead><tr style="background:#f1f5f9">'
+    + '<th style="padding:8px 10px;text-align:left;font-size:12px;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0">Beschreibung</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:12px;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0">Menge</th>'
+    + '<th style="padding:8px 10px;text-align:left;font-size:12px;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0">Einheit</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:12px;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0">Preis</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:12px;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0">Gesamt</th>'
+    + '</tr></thead>'
+    + '<tbody>' + posRows + '</tbody>'
+    + '</table>'
+    + '<div style="display:flex;justify-content:flex-end;margin-bottom:20px">'
+    + '<div style="width:260px">'
+    + '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #e2e8f0">'
+    + '<span>Netto</span><span>' + fmt(net) + '</span></div>'
+    + '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #e2e8f0">'
+    + '<span>MwSt. (' + vat + '%)</span><span>' + fmt(vatAmt) + '</span></div>'
+    + '<div style="display:flex;justify-content:space-between;padding:7px 0;font-size:15px;font-weight:700;color:' + totalColor + '">'
+    + '<span>Gesamt</span><span>' + fmt(gross) + '</span></div>'
+    + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="modal-footer">'
+    + '<button class="btn btn-ghost" onclick="forceClose()">Schließen</button>'
+    + markPaidBtn
+    + '<button class="btn btn-ghost" onclick="openInvoiceModal(\'' + id + '\')">✏️ Bearbeiten</button>'
+    + '<button class="btn btn-ghost" onclick="printDoc(\'invoice\',\'' + id + '\')">🖨️ Drucken / PDF</button>'
+    + '</div>'
+  );
+}
+
+function markPaid(id){
+  const inv = state.invoices.find(x=>x.id===id);
+  if(!inv){ toast('Rechnung nicht gefunden'); return; }
+  inv.status = 'bezahlt';
+  save('invoices');
+  forceClose();
+  renderInvoices();
+  toast('Rechnung als bezahlt markiert ✓');
+}
+
+function openInvoiceModal(id, fromQuote){
+  const inv=id?state.invoices.find(x=>x.id===id):{};
+  const src=fromQuote||inv;
+  const custOptions=state.customers.map(c=>`<option value="${c.id}" ${src.customerId===c.id?'selected':''}>${c.company||c.name}</option>`).join('');
+  const vat=src.vat||state.settings.vat||19;
+  const dueDate=src.dueDate||addDays(todayStr(),14);
+  openModal(`
+    <div class="modal-header"><h3>${id?'Rechnung bearbeiten':'Neue Rechnung'}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group"><label>Rechnungs-Nr.</label><input class="form-control" id="doc-nr" value="${src.invoiceNr||getNextINr()}"></div>
+      <div class="form-group"><label>Datum</label><input class="form-control" type="date" id="doc-date" value="${src.date||todayStr()}"></div>
+      <div class="form-group"><label>Fälligkeitsdatum</label><input class="form-control" type="date" id="doc-due" value="${dueDate}"></div>
+      <div class="form-group"><label>MwSt. (%)</label><input class="form-control" type="number" id="doc-vat" value="${vat}" oninput="updateItemTotals()"></div>
+      <div class="form-group"><label>Leistungsdatum ⚖️</label><input class="form-control" type="date" id="doc-service-date" value="${src.serviceDate||src.date||todayStr()}"></div>
+      <div class="form-group full"><label>Kunde</label><select class="form-control" id="doc-customer"><option value="">– Kunde wählen –</option>${custOptions}</select></div>
+      <div class="form-group full"><label>Betreff</label><input class="form-control" id="doc-subject" value="${src.subject||''}"></div>
+    </div>
+    <label style="font-size:13px;font-weight:600">Positionen</label>
+    ${renderItemsTable(src.items)}
+    <div class="form-group full" style="margin-top:16px"><label>Zahlungshinweis</label><textarea class="form-control" id="doc-outro">${src.outro||state.settings.footer||'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das unten angegebene Konto.'}</textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveInvoice('${id||''}')">Speichern</button>
+    </div>
+  `);
+  initItems(src.items);
+}
+
+function saveInvoice(id){
+  const subject=document.getElementById('doc-subject').value.trim();
+  if(!subject){ toast('Bitte Betreff eingeben'); return; }
+  const inv={
+    id:id||uid(),
+    invoiceNr:document.getElementById('doc-nr').value.trim(),
+    customerId:document.getElementById('doc-customer').value,
+    subject,
+    date:document.getElementById('doc-date').value,
+    dueDate:document.getElementById('doc-due').value,
+    serviceDate:document.getElementById('doc-service-date').value,
+    vat:parseFloat(document.getElementById('doc-vat').value)||19,
+    outro:document.getElementById('doc-outro').value,
+    items:JSON.parse(JSON.stringify(_items)),
+    status:id?(state.invoices.find(x=>x.id===id)?.status||'offen'):'offen',
+  };
+  if(id){ const i=state.invoices.findIndex(x=>x.id===id); state.invoices[i]=inv; }
+  else state.invoices.push(inv);
+  save('invoices'); forceClose(); renderInvoices(); toast('Rechnung gespeichert ✓');
+}
+
+// ===== PRINT DOCUMENT =====
+function printDoc(type, id){
+  const doc = type==='quote' ? state.quotes.find(x=>x.id===id) : state.invoices.find(x=>x.id===id);
+  const s = state.settings;
+  const customer = state.customers.find(x=>x.id===doc.customerId)||{};
+  const net = calcNet(doc.items);
+  const vat = doc.vat||19;
+  const vatAmt = net*vat/100;
+  const gross = net+vatAmt;
+  const docNr = type==='quote' ? doc.quoteNr : doc.invoiceNr;
+  const docLabel = type==='quote' ? 'ANGEBOT' : 'RECHNUNG';
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>${docLabel} ${docNr}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;font-size:13px;color:#1e293b;padding:40px}
+    .header{display:flex;justify-content:space-between;margin-bottom:32px}
+    .company h1{font-size:20px;font-weight:700;color:#2563eb;margin-bottom:4px}
+    .company p{font-size:12px;color:#64748b;line-height:1.6}
+    .doc-info{text-align:right}
+    .doc-info h2{font-size:22px;font-weight:700;color:#1e293b;margin-bottom:8px}
+    .doc-info p{font-size:12px;color:#64748b;line-height:1.6}
+    .customer{background:#f8fafc;padding:14px 16px;border-radius:8px;margin-bottom:24px;border-left:4px solid #2563eb}
+    .customer h4{font-size:12px;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+    .customer p{font-size:14px;font-weight:600}
+    .customer .addr{font-size:13px;color:#475569;margin-top:2px}
+    .subject{font-size:16px;font-weight:700;margin-bottom:8px}
+    .intro{font-size:13px;color:#475569;margin-bottom:20px;line-height:1.6}
+    table{width:100%;border-collapse:collapse;margin-bottom:16px}
+    th{background:#f1f5f9;padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#64748b;border:1px solid #e2e8f0}
+    td{padding:9px 12px;border:1px solid #e2e8f0;font-size:13px;vertical-align:top}
+    .num{text-align:right}
+    .totals{margin-left:auto;width:280px}
+    .tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #e2e8f0}
+    .tot-row.grand{font-size:16px;font-weight:700;color:#2563eb;border-bottom:none;padding-top:8px}
+    .outro{font-size:12px;color:#475569;margin-top:20px;line-height:1.6;padding:12px;background:#f8fafc;border-radius:6px}
+    .footer{margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:11px;color:#94a3b8}
+    .gz-header{display:flex;align-items:center;gap:16px}
+    .gz-doc-name{font-family:'Outfit',system-ui,sans-serif;font-size:22px;font-weight:900;color:#0a1a14;letter-spacing:2.5px}
+    .gz-doc-line{width:50px;height:2px;background:linear-gradient(90deg,#009966,#006898);border-radius:1px;margin:6px 0;opacity:.4}
+    .gz-doc-slogan{font-size:12px;color:rgba(10,26,20,.5);font-family:system-ui}
+    .gz-doc-sub{font-family:monospace;font-size:9px;font-weight:600;color:rgba(0,102,68,.4);letter-spacing:3px;margin-top:4px;text-transform:uppercase}
+    .header-divider{height:2px;background:linear-gradient(90deg,#009966,rgba(0,104,152,.15));border-radius:1px;margin:20px 0 28px}
+  </style></head><body>
+  <div class="header">
+    <div class="company">
+      ${s.logo
+        ? `<div class="gz-header"><img src="${s.logo}" style="max-height:64px;max-width:64px;border-radius:8px" alt="Logo"><div><div class="gz-doc-name">${s.name||'Ihr Unternehmen'}</div><div class="gz-doc-line"></div><div class="gz-doc-slogan">${s.slogan||''}</div></div></div>`
+        : `<div class="gz-header">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <defs><radialGradient id="pr1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#009966" stop-opacity=".08"/><stop offset="100%" stop-color="#009966" stop-opacity="0"/></radialGradient><linearGradient id="pr2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#009966"/><stop offset="100%" stop-color="#006898"/></linearGradient></defs>
+              <g transform="translate(32,32)"><circle r="28" fill="url(#pr1)"/><line x1="-18" y1="-16" x2="-8" y2="-6" stroke="#009966" stroke-width=".7" opacity=".25"/><line x1="18" y1="-16" x2="8" y2="-6" stroke="#006898" stroke-width=".7" opacity=".25"/><line x1="-18" y1="16" x2="-8" y2="6" stroke="#006898" stroke-width=".6" opacity=".18"/><line x1="18" y1="16" x2="8" y2="6" stroke="#009966" stroke-width=".6" opacity=".18"/><circle cx="-18" cy="-16" r="2.5" fill="#009966" opacity=".4"/><circle cx="18" cy="-16" r="2.5" fill="#006898" opacity=".4"/><circle cx="-18" cy="16" r="2" fill="#006898" opacity=".28"/><circle cx="18" cy="16" r="2" fill="#009966" opacity=".28"/><rect x="-13" y="-10" width="26" height="20" rx="6" fill="rgba(0,153,102,.05)" stroke="url(#pr2)" stroke-width="1.3"/><text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="Outfit,system-ui" font-size="13" font-weight="900" fill="#0a1a14" letter-spacing="2">AI</text></g>
+            </svg>
+            <div>
+              <div class="gz-doc-name">${s.name||'Ihr Unternehmen'}</div>
+              <div class="gz-doc-line"></div>
+              <div class="gz-doc-slogan">${s.slogan||''}</div>
+              <div class="gz-doc-sub">${s.owner||''}</div>
+            </div>
+           </div>`
+      }
+      <p style="margin-top:10px;font-size:12px;color:#475569">${s.address||''}</p>
+      ${s.phone?'<p style="font-size:12px;color:#475569">Tel: '+s.phone+'</p>':''}
+      ${s.email?'<p style="font-family:monospace;font-size:12px;color:#009966">'+s.email+'</p>':''}
+      ${s.web?'<p style="font-size:12px;color:#475569">'+s.web+'</p>':''}
+    </div>
+    <div class="doc-info">
+      <h2>${docLabel}</h2>
+      <p><strong>Nr.:</strong> ${docNr}</p>
+      <p><strong>Datum:</strong> ${fmtDate(doc.date)}</p>
+      ${type==='invoice' && doc.serviceDate && doc.serviceDate!==doc.date ? '<p><strong>Leistungsdatum:</strong> '+fmtDate(doc.serviceDate)+'</p>' : ''}
+      ${type==='invoice'?`<p><strong>Fällig:</strong> ${fmtDate(doc.dueDate)}</p>`:''}
+      ${s.tax?'<p><strong>USt-IdNr.:</strong> '+s.tax+'</p>':''}
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="customer">
+    <h4>Empfänger</h4>
+    <p>${customer.company||customer.name||'–'}</p>
+    ${customer.company&&customer.name?'<div class="addr">'+customer.name+'</div>':''}
+    ${customer.address?'<div class="addr">'+customer.address+'</div>':''}
+    ${(customer.zip||customer.city)?'<div class="addr">'+(customer.zip||'')+' '+(customer.city||'')+'</div>':''}
+  </div>
+  <div class="subject">${doc.subject}</div>
+  ${doc.intro?'<div class="intro">'+doc.intro+'</div>':''}
+  <table>
+    <thead><tr><th style="width:45%">Beschreibung</th><th style="width:10%">Menge</th><th style="width:10%">Einheit</th><th class="num" style="width:15%">Einzelpreis</th><th class="num" style="width:20%">Gesamt</th></tr></thead>
+    <tbody>
+      ${(doc.items||[]).filter(it=>it.desc||it.price).map(it=>`
+        <tr>
+          <td>${it.desc||''}</td>
+          <td>${it.qty||1}</td>
+          <td>${it.unit||'Stk.'}</td>
+          <td class="num">${fmt(it.price||0)}</td>
+          <td class="num">${fmt((parseFloat(it.qty)||0)*(parseFloat(it.price)||0))}</td>
+        </tr>`).join('')}
+    </tbody>
+  </table>
+  <div class="totals">
+    <div class="tot-row"><span>Nettobetrag:</span><span>${fmt(net)}</span></div>
+    <div class="tot-row"><span>MwSt. ${vat}%:</span><span>${fmt(vatAmt)}</span></div>
+    <div class="tot-row grand"><span>Gesamtbetrag:</span><span>${fmt(gross)}</span></div>
+  </div>
+  ${doc.outro?'<div class="outro">'+doc.outro+'</div>':''}
+  ${type==='invoice'&&(s.iban||s.bank)?`<div class="outro" style="margin-top:12px"><strong>Bankverbindung:</strong> ${s.iban||''} · ${s.bank||''}</div>`:''}
+  <div class="footer">
+    <span>${s.name||''} · ${s.address||''}</span>
+    <span>${s.phone||''} · ${s.email||''}</span>
+  </div>
+  <script>window.onload=()=>{ window.print(); }<\/script>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+// ===== CHECKLISTS =====
+function renderChecklists(){
+  const con=document.getElementById('checklists-container');
+  if(!state.checklists.length){
+    con.innerHTML='<div class="empty"><div class="icon">✅</div><p>Noch keine Checklisten erstellt</p></div>'; return;
+  }
+  con.innerHTML=state.checklists.map(cl=>`
+    <div class="table-wrap" style="margin-bottom:16px">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700;font-size:15px">${cl.title}</div>
+          ${cl.desc?'<div style="font-size:12px;color:var(--muted);margin-top:2px">'+cl.desc+'</div>':''}
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="font-size:12px;color:var(--muted);align-self:center">${cl.items.filter(i=>i.done).length}/${cl.items.length}</span>
+          <button class="btn-icon btn-sm" onclick="openChecklistModal('${cl.id}')">✏️</button>
+          <button class="btn-icon btn-sm btn-danger" onclick="deleteChecklist('${cl.id}')">🗑️</button>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        <div class="checklist-items">
+          ${cl.items.map((it,i)=>`
+            <div class="check-item ${it.done?'done':''}">
+              <input type="checkbox" id="ci-${cl.id}-${i}" ${it.done?'checked':''} onchange="toggleCheck('${cl.id}',${i},this.checked)">
+              <label for="ci-${cl.id}-${i}">${it.text}</label>
+            </div>`).join('')}
+        </div>
+        <!-- FOTOS -->
+        <div style="margin-top:12px">
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">FOTOS</div>
+          <div class="photo-grid" id="photos-${cl.id}">
+            ${(cl.photos||[]).map((p,i)=>`<img src="${p}" class="photo-thumb" onclick="viewPhoto('${cl.id}',${i})">`).join('')}
+            <div class="photo-add" onclick="document.getElementById('photo-input-${cl.id}').click()" title="Foto hinzufügen">📷</div>
+          </div>
+          <input type="file" id="photo-input-${cl.id}" accept="image/*" capture="environment" style="display:none" onchange="addPhoto('${cl.id}',this)">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="resetChecklist('${cl.id}')">↺ Zurücksetzen</button>
+          <button class="btn btn-success btn-sm" onclick="exportChecklist('${cl.id}')">📄 Protokoll & Unterschrift</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleCheck(clId, idx, val){
+  const cl=state.checklists.find(x=>x.id===clId);
+  cl.items[idx].done=val;
+  save('checklists'); renderChecklists();
+}
+
+function resetChecklist(clId){
+  const cl=state.checklists.find(x=>x.id===clId);
+  cl.items.forEach(i=>i.done=false);
+  save('checklists'); renderChecklists(); toast('Zurückgesetzt');
+}
+
+function exportChecklist(clId){
+  const cl=state.checklists.find(x=>x.id===clId);
+  // open signature modal first
+  openModal(`
+    <div class="modal-header"><h3>📄 Protokoll erstellen</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Optional: Unterschrift einholen bevor das Protokoll gedruckt wird.</p>
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px">Unterschrift</label>
+    <canvas id="sig-pad" class="sig-canvas" width="580" height="160"></canvas>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-ghost btn-sm" onclick="clearSig()">↺ Löschen</button>
+      <span style="font-size:12px;color:var(--muted);align-self:center">Auf dem Canvas mit Maus oder Finger unterschreiben</span>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label>Name des Unterzeichners</label>
+      <input class="form-control" id="sig-name" placeholder="Vor- und Nachname">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-ghost" onclick="printChecklistProtocol('${clId}',false)">Ohne Unterschrift drucken</button>
+      <button class="btn btn-primary" onclick="printChecklistProtocol('${clId}',true)">✍️ Mit Unterschrift drucken</button>
+    </div>
+  `);
+  setTimeout(()=>initSigPad(),50);
+}
+
+let _sigCtx=null, _sigDrawing=false;
+function initSigPad(){
+  const canvas=document.getElementById('sig-pad');
+  if(!canvas) return;
+  // Responsive width
+  const w=canvas.parentElement.clientWidth-48;
+  canvas.width=Math.min(580,w); canvas.height=160;
+  _sigCtx=canvas.getContext('2d');
+  _sigCtx.strokeStyle='#1e293b'; _sigCtx.lineWidth=2.5; _sigCtx.lineCap='round';
+  const pos=e=>{ const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}; };
+  canvas.onmousedown=canvas.ontouchstart=e=>{ e.preventDefault(); _sigDrawing=true; const p=pos(e); _sigCtx.beginPath(); _sigCtx.moveTo(p.x,p.y); };
+  canvas.onmousemove=canvas.ontouchmove=e=>{ e.preventDefault(); if(!_sigDrawing) return; const p=pos(e); _sigCtx.lineTo(p.x,p.y); _sigCtx.stroke(); };
+  canvas.onmouseup=canvas.ontouchend=()=>{ _sigDrawing=false; };
+}
+function clearSig(){ if(_sigCtx){ const c=document.getElementById('sig-pad'); _sigCtx.clearRect(0,0,c.width,c.height); } }
+
+function printChecklistProtocol(clId, withSig){
+  const cl=state.checklists.find(x=>x.id===clId);
+  const s=state.settings;
+  const now=new Date().toLocaleString('de-DE');
+  const done=cl.items.filter(i=>i.done).length;
+  let sigData='', sigName='';
+  if(withSig){
+    const c=document.getElementById('sig-pad');
+    sigData=c?c.toDataURL():'';
+    sigName=document.getElementById('sig-name')?.value||'';
+  }
+  const photos=(cl.photos||[]);
+  const html=`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Protokoll: ${cl.title}</title>
+  <style>
+    *{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:40px;font-size:13px;color:#1e293b}
+    h1{font-size:18px;margin-bottom:4px;color:#2563eb}
+    .meta{color:#64748b;margin-bottom:20px;font-size:12px}
+    .item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #e2e8f0;align-items:center}
+    .check{font-size:16px;min-width:20px}.text{flex:1}
+    .photos{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+    .photos img{width:150px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #e2e8f0}
+    .sig-box{margin-top:30px;display:inline-block;min-width:220px}
+    .sig-box img{display:block;max-height:80px;margin-bottom:6px}
+    .sig-line{border-top:2px solid #1e293b;padding-top:6px}
+    .sig-name{font-size:12px;color:#64748b}
+    .footer{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between}
+  
+._ls4fw{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f0f4f8,#e8eef5);display:flex;align-items:center;justify-content:center;padding:24px}
+@media(prefers-color-scheme:dark){._ls4fw{background:linear-gradient(135deg,#1a1a2e,#16213e)}}
+._ls4fw.hidden{display:none}
+._lbc12{width:100%;max-width:400px;text-align:center}
+._llpps{font-size:48px;margin-bottom:16px}
+._lt3fr{font-family:'Segoe UI',system-ui,sans-serif;font-size:24px;font-weight:800;color:#2c3e50;margin-bottom:6px}
+@media(prefers-color-scheme:dark){._lt3fr{color:#fff}}
+._lsbxey{font-size:14px;color:#7f8c8d;margin-bottom:28px;line-height:1.5}
+@media(prefers-color-scheme:dark){._lsbxey{color:rgba(255,255,255,0.45)}}
+._lie9k{width:100%;padding:16px 18px;border:2px solid #ddd;border-radius:12px;background:#fff;color:#2c3e50;font-family:monospace;font-size:18px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;transition:border-color .3s;box-sizing:border-box}
+._lie9k:focus{border-color:#f59e0b}
+._lie9k::placeholder{color:#ccc;letter-spacing:2px;font-size:14px}
+@media(prefers-color-scheme:dark){._lie9k{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.15)}._lie9k:focus{border-color:#f59e0b}._lie9k::placeholder{color:rgba(255,255,255,0.2)}}
+._lbt36h{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:14px;transition:all .2s;box-sizing:border-box}
+._lbt36h:active{transform:scale(0.97);opacity:0.9}
+._lewiy{color:#e74c3c;font-size:13px;font-weight:600;margin-top:12px;min-height:20px}
+._lfvi0{font-size:10px;color:rgba(0,0,0,0.15);margin-top:32px;letter-spacing:2px}
+@media(prefers-color-scheme:dark){._lfvi0{color:rgba(255,255,255,0.08)}}
+
+</style></head>
+  <body>
+    ${s.logo?`<img src="${s.logo}" style="max-height:50px;margin-bottom:16px">`:''}
+    <h1>Protokoll: ${cl.title}</h1>
+    <div class="meta">Erstellt: ${now} · ${done}/${cl.items.length} erledigt${s.name?' · '+s.name:''}</div>
+    ${cl.items.map(it=>`<div class="item"><span class="check">${it.done?'✅':'⬜'}</span><span class="text">${it.text}</span></div>`).join('')}
+    ${photos.length?`<div style="font-weight:600;margin-top:20px;margin-bottom:8px">Fotos (${photos.length})</div><div class="photos">${photos.map(p=>`<img src="${p}">`).join('')}</div>`:''}
+    ${sigData?`<div style="margin-top:30px"><div style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:8px">Unterschrift</div><div class="sig-box"><img src="${sigData}"><div class="sig-line"><div class="sig-name">${sigName||'Unterschrift'}</div></div></div></div>`:''}
+    <div class="footer"><span>${s.name||''} · ${s.address||''}</span><span>${now}</span></div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`;
+  forceClose();
+  const w=window.open('','_blank'); w.document.write(html); w.document.close();
+}
+
+function addPhoto(clId, input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>2000000){ toast('Foto zu groß (max. 2 MB)'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const cl=state.checklists.find(x=>x.id===clId);
+    if(!cl.photos) cl.photos=[];
+    cl.photos.push(e.target.result);
+    save('checklists'); renderChecklists(); toast('Foto hinzugefügt ✓');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function viewPhoto(clId, idx){
+  const cl=state.checklists.find(x=>x.id===clId);
+  const src=cl.photos[idx];
+  openModal(`
+    <div class="modal-header"><h3>Foto ${idx+1}/${cl.photos.length}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <img src="${src}" style="width:100%;border-radius:8px;margin-bottom:12px">
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="deletePhoto('${clId}',${idx})">🗑️ Löschen</button>
+      <button class="btn btn-ghost" onclick="forceClose()">Schließen</button>
+    </div>
+  `);
+}
+
+function deletePhoto(clId, idx){
+  const cl=state.checklists.find(x=>x.id===clId);
+  cl.photos.splice(idx,1);
+  save('checklists'); forceClose(); renderChecklists(); toast('Foto gelöscht');
+}
+
+function deleteChecklist(id){
+  if(!confirm('Checkliste löschen?')) return;
+  state.checklists=state.checklists.filter(x=>x.id!==id);
+  save('checklists'); renderChecklists();
+}
+
+function openChecklistModal(id){
+  const cl=id?state.checklists.find(x=>x.id===id):{};
+  openModal(`
+    <div class="modal-header"><h3>${id?'Checkliste bearbeiten':'Neue Checkliste'}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group full"><label>Titel</label><input class="form-control" id="cl-title" value="${cl.title||''}" placeholder="z.B. Übergabe Baustelle"></div>
+      <div class="form-group full"><label>Beschreibung (optional)</label><input class="form-control" id="cl-desc" value="${cl.desc||''}"></div>
+    </div>
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px">Punkte</label>
+    <div id="cl-items-list">
+      ${(cl.items||[]).map((it,i)=>clItemRow(it.text,i)).join('')}
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="addClItem()" style="margin-top:8px">+ Punkt hinzufügen</button>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveChecklist('${id||''}')">Speichern</button>
+    </div>
+  `);
+  if(!(cl.items&&cl.items.length)) addClItem();
+}
+
+function clItemRow(text,i){
+  return `<div style="display:flex;gap:8px;margin-bottom:8px" id="clrow-${i}">
+    <input class="form-control" value="${text||''}" placeholder="Punkt ${i+1}" style="flex:1">
+    <button class="btn-icon btn-sm btn-danger" onclick="document.getElementById('clrow-${i}').remove()">×</button>
+  </div>`;
+}
+let _clIdx=0;
+function addClItem(){
+  const list=document.getElementById('cl-items-list');
+  const div=document.createElement('div');
+  div.innerHTML=clItemRow('',_clIdx++);
+  list.appendChild(div.firstChild);
+  list.lastChild.querySelector('input').focus();
+}
+
+function saveChecklist(id){
+  const title=document.getElementById('cl-title').value.trim();
+  if(!title){ toast('Bitte Titel eingeben'); return; }
+  const inputs=[...document.querySelectorAll('#cl-items-list input')].map(i=>i.value.trim()).filter(Boolean);
+  if(!inputs.length){ toast('Bitte mindestens einen Punkt eingeben'); return; }
+  const existing = id ? state.checklists.find(x=>x.id===id) : null;
+  const cl={
+    id:id||uid(), title,
+    desc:document.getElementById('cl-desc').value.trim(),
+    items:inputs.map(text=>({ text, done: existing?.items?.find(i=>i.text===text)?.done||false })),
+  };
+  if(id){ const i=state.checklists.findIndex(x=>x.id===id); state.checklists[i]=cl; }
+  else state.checklists.push(cl);
+  save('checklists'); forceClose(); renderChecklists(); toast('Checkliste gespeichert ✓');
+}
+
+// ===== TEMPLATES =====
+function renderTemplates(){
+  const con=document.getElementById('templates-container');
+  if(!state.templates.length){
+    con.innerHTML='<div class="empty"><div class="icon">💬</div><p>Noch keine Vorlagen erstellt</p></div>'; return;
+  }
+  con.innerHTML=state.templates.map(t=>`
+    <div class="template-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <h4>${t.title}</h4>
+          <span class="badge badge-blue" style="font-size:11px">${t.type||'Allgemein'}</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-icon btn-sm" onclick="openTemplateModal('${t.id}')">✏️</button>
+          <button class="btn-icon btn-sm btn-danger" onclick="deleteTemplate('${t.id}')">🗑️</button>
+        </div>
+      </div>
+      <p style="margin-top:10px">${t.body}</p>
+      <div class="template-actions">
+        <button class="btn btn-primary btn-sm" onclick="useTemplate('${t.id}')">📋 Verwenden</button>
+      </div>
+    </div>`).join('');
+}
+
+function openTemplateModal(id){
+  const t=id?state.templates.find(x=>x.id===id):{};
+  openModal(`
+    <div class="modal-header"><h3>${id?'Vorlage bearbeiten':'Neue Vorlage'}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Titel</label><input class="form-control" id="tpl-title" value="${t.title||''}" placeholder="z.B. Angebots-Bestätigung"></div>
+      <div class="form-group full">
+        <label>Typ</label>
+        <select class="form-control" id="tpl-type">
+          ${['E-Mail','WhatsApp','SMS','Brief','Allgemein'].map(ty=>`<option ${(t.type||'Allgemein')===ty?'selected':''}>${ty}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group full"><label>Text</label><textarea class="form-control" id="tpl-body" rows="6" placeholder="Hallo {name},&#10;&#10;vielen Dank für...">${t.body||''}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveTemplate('${id||''}')">Speichern</button>
+    </div>
+  `);
+}
+
+function saveTemplate(id){
+  const title=document.getElementById('tpl-title').value.trim();
+  const body=document.getElementById('tpl-body').value.trim();
+  if(!title||!body){ toast('Bitte Titel und Text eingeben'); return; }
+  const t={id:id||uid(),title,type:document.getElementById('tpl-type').value,body};
+  if(id){ const i=state.templates.findIndex(x=>x.id===id); state.templates[i]=t; }
+  else state.templates.push(t);
+  save('templates'); forceClose(); renderTemplates(); toast('Vorlage gespeichert ✓');
+}
+
+function deleteTemplate(id){
+  if(!confirm('Vorlage löschen?')) return;
+  state.templates=state.templates.filter(x=>x.id!==id);
+  save('templates'); renderTemplates();
+}
+
+function useTemplate(id){
+  const t=state.templates.find(x=>x.id===id);
+  openModal(`
+    <div class="modal-header"><h3>${t.title}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Platzhalter ersetzen:</p>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group"><label>{name}</label><input class="form-control" id="ph-name" placeholder="Name"></div>
+      <div class="form-group"><label>{firma}</label><input class="form-control" id="ph-firma" placeholder="Firma"></div>
+      <div class="form-group"><label>{betrag}</label><input class="form-control" id="ph-betrag" placeholder="Betrag"></div>
+      <div class="form-group"><label>{datum}</label><input class="form-control" id="ph-datum" placeholder="Datum" value="${new Date().toLocaleDateString('de-DE')}"></div>
+    </div>
+    <label style="font-size:13px;font-weight:600">Vorschau</label>
+    <textarea class="form-control" id="tpl-preview" rows="8" style="margin-top:8px">${t.body}</textarea>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Schließen</button>
+      <button class="btn btn-primary" onclick="copyTemplate()">📋 Kopieren</button>
+    </div>
+  `);
+  // live preview
+  ['ph-name','ph-firma','ph-betrag','ph-datum'].forEach(pid=>{
+    document.getElementById(pid).addEventListener('input',()=>{
+      const name=document.getElementById('ph-name').value||'{name}';
+      const firma=document.getElementById('ph-firma').value||'{firma}';
+      const betrag=document.getElementById('ph-betrag').value||'{betrag}';
+      const datum=document.getElementById('ph-datum').value||'{datum}';
+      document.getElementById('tpl-preview').value=t.body
+        .replace(/\{name\}/g,name).replace(/\{firma\}/g,firma)
+        .replace(/\{betrag\}/g,betrag).replace(/\{datum\}/g,datum);
+    });
+  });
+}
+
+function copyTemplate(){
+  const text=document.getElementById('tpl-preview').value;
+  navigator.clipboard.writeText(text).then(()=>toast('Text kopiert ✓')).catch(()=>toast('Strg+C zum Kopieren'));
+}
+
+// ===== SETTINGS =====
+function renderSettings(){
+  const s=state.settings;
+  ['name','owner','address','phone','email','web','tax','iban','bank','vat','footer'].forEach(k=>{
+    const el=document.getElementById('s-'+k);
+    if(el) el.value=s[k]||'';
+  });
+  renderLogoPreview();
+}
+
+document.getElementById('settings-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  ['name','owner','address','phone','email','web','tax','iban','bank','vat','footer'].forEach(k=>{
+    const el=document.getElementById('s-'+k);
+    if(el) state.settings[k]=el.value.trim();
+  });
+  saveSettings(); toast('Einstellungen gespeichert ✓');
+});
+
+function handleLogoUpload(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>500000){ toast('Logo zu groß (max. 500 KB)'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    state.settings.logo=e.target.result;
+    saveSettings(); renderLogoPreview(); toast('Logo gespeichert ✓');
+  };
+  reader.readAsDataURL(file);
+}
+
+function deleteLogo(){
+  state.settings.logo=''; saveSettings(); renderLogoPreview(); toast('Logo entfernt');
+}
+
+function renderLogoPreview(){
+  const img=document.getElementById('logo-preview');
+  const btn=document.getElementById('logo-delete-btn');
+  if(!img||!btn) return;
+  if(state.settings.logo){ img.src=state.settings.logo; img.style.display='block'; btn.style.display='inline-flex'; }
+  else { img.style.display='none'; btn.style.display='none'; }
+}
+
+// ===== ZEITERFASSUNG =====
+let _timerInterval=null, _timerStart=null, _timerSecs=0;
+
+function renderZeit(){
+  // populate customer dropdown
+  const sel=document.getElementById('timer-customer');
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML='<option value="">– Kein Kunde –</option>'+
+      state.customers.map(c=>`<option value="${c.id}" ${c.id===cur?'selected':''}>${c.company||c.name}</option>`).join('');
+  }
+  const list=state.zeit||[];
+  const totalSecs=list.reduce((s,z)=>s+z.secs,0);
+  const el=document.getElementById('zeit-total-label');
+  if(el) el.textContent='Gesamt: '+secsToHHMM(totalSecs)+' h';
+  document.getElementById('zeit-body').innerHTML=list.length?list.map(z=>`
+    <tr style="cursor:pointer" onclick="viewZeit('${z.id}',event)">
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="zeit-check" data-id="${z.id}"></td>
+      <td>${fmtDate(z.date)}</td>
+      <td>${getCustomerName(z.customerId)}</td>
+      <td>${z.desc||'–'}</td>
+      <td><strong>${secsToHHMM(z.secs)}</strong></td>
+      <td style="text-align:right">${(z.secs/3600).toFixed(2)} Std.</td>
+      <td class="td-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon btn-sm btn-danger" onclick="deleteZeit('${z.id}')" aria-label="Löschen">🗑️</button>
+      </td>
+    </tr>`).join(''):
+    '<tr><td colspan="7"><div class="empty"><div class="icon">⏱️</div><p>Noch keine Zeiten erfasst</p></div></td></tr>';
+}
+
+function viewZeit(id, e){
+  if(e && e.target.closest('.td-actions')) return;
+  const z=(state.zeit||[]).find(x=>x.id===id);
+  const customer=state.customers.find(x=>x.id===z.customerId)||{};
+  const stunden=(z.secs/3600).toFixed(2);
+  openModal(
+    '<div class="modal-header">' +
+      '<div>' +
+        '<h3>' + (z.desc||'Zeiteintrag') + '</h3>' +
+        '<div style="font-size:13px;color:var(--muted);margin-top:2px">' + fmtDate(z.date) + '</div>' +
+      '</div>' +
+      '<button class="modal-close" onclick="forceClose()">×</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">' +
+      '<div style="background:var(--bg);border-radius:8px;padding:16px">' +
+        '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Kunde</div>' +
+        (z.customerId
+          ? '<div style="font-weight:600;font-size:15px">' + (customer.company||customer.name||'–') + '</div>' +
+            (customer.company&&customer.name ? '<div style="font-size:13px;color:var(--muted)">' + customer.name + '</div>' : '') +
+            (customer.phone ? '<div style="font-size:12px;color:var(--muted);margin-top:6px">📞 ' + customer.phone + '</div>' : '') +
+            (customer.email ? '<div style="font-size:12px;color:var(--muted)">✉️ ' + customer.email + '</div>' : '')
+          : '<div style="color:var(--muted)">Kein Kunde zugewiesen</div>'
+        ) +
+      '</div>' +
+      '<div style="background:var(--bg);border-radius:8px;padding:16px">' +
+        '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Zeitdetails</div>' +
+        '<div style="font-size:13px;margin-bottom:6px">📅 Datum: <strong>' + fmtDate(z.date) + '</strong></div>' +
+        '<div style="font-size:13px;margin-bottom:6px">⏱️ Dauer: <strong>' + secsToHHMM(z.secs) + '</strong></div>' +
+        '<div style="font-size:13px">🔢 Stunden: <strong>' + stunden + ' Std.</strong></div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="background:var(--bg);border-radius:8px;padding:16px;margin-bottom:20px">' +
+      '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Tätigkeit</div>' +
+      '<div style="font-size:15px;font-weight:600">' + (z.desc||'–') + '</div>' +
+    '</div>' +
+    '<div style="background:var(--ps);border-radius:8px;padding:20px;text-align:center;margin-bottom:20px">' +
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Erfasste Zeit</div>' +
+      '<div style="font-size:40px;font-weight:700;color:var(--p);font-variant-numeric:tabular-nums">' + secsToHHMM(z.secs) + '</div>' +
+      '<div style="font-size:13px;color:var(--muted);margin-top:4px">' + stunden + ' Stunden</div>' +
+    '</div>' +
+    '<div class="modal-footer">' +
+      '<button class="btn btn-ghost" onclick="forceClose()">Schließen</button>' +
+      '<button class="btn btn-success" onclick="forceClose();zeitSingleToInvoice(\'' + id + '\')">💶 → Rechnung</button>' +
+    '</div>'
+  );
+}
+
+function zeitSingleToInvoice(id){
+  const z=(state.zeit||[]).find(x=>x.id===id);
+  const items=[{desc:z.desc+' ('+fmtDate(z.date)+')',qty:(z.secs/3600).toFixed(2),unit:'Std.',price:''}];
+  openInvoiceModal(null,{customerId:z.customerId||'',items,subject:'Stundenabrechnung'});
+  toast('Zeit übernommen – bitte Stundensatz eintragen');
+}
+function secsToHHMM(s){
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sc=s%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');
+}
+
+function timerStart(){
+  if(_timerInterval) return;
+  _timerStart=Date.now()-_timerSecs*1000;
+  _timerInterval=setInterval(()=>{
+    _timerSecs=Math.floor((Date.now()-_timerStart)/1000);
+    document.getElementById('timer-display').textContent=secsToHHMM(_timerSecs);
+    document.getElementById('timer-display').classList.add('running');
+  },1000);
+  document.getElementById('timer-start-btn').disabled=true;
+  document.getElementById('timer-stop-btn').disabled=false;
+}
+
+function timerStop(){
+  if(!_timerInterval) return;
+  clearInterval(_timerInterval); _timerInterval=null;
+  if(_timerSecs<5){ toast('Zu kurz – mindestens 5 Sekunden'); _timerSecs=0; document.getElementById('timer-display').textContent='00:00:00'; document.getElementById('timer-display').classList.remove('running'); document.getElementById('timer-start-btn').disabled=false; document.getElementById('timer-stop-btn').disabled=true; return; }
+  const desc=document.getElementById('timer-desc').value.trim();
+  const customerId=document.getElementById('timer-customer').value;
+  if(!state.zeit) state.zeit=[];
+  state.zeit.push({id:uid(),date:todayStr(),customerId,desc:desc||'Arbeit',secs:_timerSecs});
+  save('zeit');
+  _timerSecs=0; document.getElementById('timer-display').textContent='00:00:00';
+  document.getElementById('timer-display').classList.remove('running');
+  document.getElementById('timer-start-btn').disabled=false;
+  document.getElementById('timer-stop-btn').disabled=true;
+  document.getElementById('timer-desc').value='';
+  renderZeit(); toast('Zeit gespeichert ✓');
+}
+
+function openZeitModal(){
+  const custOptions=state.customers.map(c=>`<option value="${c.id}">${c.company||c.name}</option>`).join('');
+  openModal(`
+    <div class="modal-header"><h3>Zeit manuell erfassen</h3><button class="modal-close" onclick="forceClose()">×</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Datum</label><input class="form-control" type="date" id="mz-date" value="${todayStr()}"></div>
+      <div class="form-group"><label>Stunden</label><input class="form-control" type="number" id="mz-h" placeholder="0" min="0"></div>
+      <div class="form-group"><label>Minuten</label><input class="form-control" type="number" id="mz-m" placeholder="0" min="0" max="59"></div>
+      <div class="form-group"><label>Kunde</label><select class="form-control" id="mz-cust"><option value="">– Kein Kunde –</option>${custOptions}</select></div>
+      <div class="form-group full"><label>Tätigkeit</label><input class="form-control" id="mz-desc" placeholder="Was wurde gemacht?"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="forceClose()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveManualZeit()">Speichern</button>
+    </div>
+  `);
+}
+
+function saveManualZeit(){
+  const h=parseInt(document.getElementById('mz-h').value)||0;
+  const m=parseInt(document.getElementById('mz-m').value)||0;
+  const secs=h*3600+m*60;
+  if(secs<60){ toast('Bitte Dauer eingeben'); return; }
+  if(!state.zeit) state.zeit=[];
+  state.zeit.push({id:uid(),date:document.getElementById('mz-date').value,customerId:document.getElementById('mz-cust').value,desc:document.getElementById('mz-desc').value.trim()||'Arbeit',secs});
+  save('zeit'); forceClose(); renderZeit(); toast('Zeit gespeichert ✓');
+}
+
+function deleteZeit(id){
+  state.zeit=(state.zeit||[]).filter(x=>x.id!==id);
+  save('zeit'); renderZeit();
+}
+
+function toggleAllZeit(cb){
+  document.querySelectorAll('.zeit-check').forEach(c=>c.checked=cb.checked);
+}
+
+function zeitToInvoice(){
+  const checked=[...document.querySelectorAll('.zeit-check:checked')].map(c=>c.dataset.id);
+  if(!checked.length){ toast('Bitte Zeiten auswählen'); return; }
+  const entries=(state.zeit||[]).filter(z=>checked.includes(z.id));
+  const items=entries.map(z=>({desc:z.desc+' ('+fmtDate(z.date)+')',qty:(z.secs/3600).toFixed(2),unit:'Std.',price:''}));
+  // group by customer if same
+  const custIds=[...new Set(entries.map(z=>z.customerId).filter(Boolean))];
+  const fromQ={customerId:custIds[0]||'',items,subject:'Stundenabrechnung'};
+  openInvoiceModal(null, fromQ);
+  toast('Zeiten übernommen – bitte Stundensatz eintragen');
+}
+
+// ===== BACKUP & RESTORE =====
+function exportBackup(){
+  const data={
+    customers:state.customers, quotes:state.quotes, invoices:state.invoices,
+    checklists:state.checklists, templates:state.templates,
+    zeit:state.zeit||[], settings:state.settings,
+    exported:new Date().toISOString(), version:'1.1'
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='office-life-backup-'+todayStr()+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Backup exportiert ✓');
+}
+
+function importBackup(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.customers&&!data.invoices) throw new Error('Ungültige Datei');
+      if(!confirm('Alle aktuellen Daten werden überschrieben. Fortfahren?')){ input.value=''; return; }
+      if(data.customers) { state.customers=data.customers; save('customers'); }
+      if(data.quotes) { state.quotes=data.quotes; save('quotes'); }
+      if(data.invoices) { state.invoices=data.invoices; save('invoices'); }
+      if(data.checklists) { state.checklists=data.checklists; save('checklists'); }
+      if(data.templates) { state.templates=data.templates; save('templates'); }
+      if(data.zeit) { state.zeit=data.zeit; save('zeit'); }
+      if(data.settings) { state.settings=data.settings; saveSettings(); }
+      toast('Backup wiederhergestellt ✓'); render('dashboard');
+    }catch(err){ toast('Fehler: Ungültige Backup-Datei'); }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ===== THEME SYSTEM =====
+function setColor(color){
+  document.documentElement.setAttribute('data-theme', color);
+  localStorage.setItem('ol_color', color);
+  document.querySelectorAll('.theme-color-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.color===color);
+  });
+  const names={blau:'Professionell',natur:'Natur',handwerk:'Handwerk'};
+  toast('Farbthema: '+(names[color]||color)+' \u2713');
+}
+function setMode(mode){
+  document.documentElement.setAttribute('data-mode', mode);
+  localStorage.setItem('ol_mode', mode);
+  document.querySelectorAll('.theme-mode-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mode===mode);
+  });
+  const btn=document.getElementById('dark-toggle-btn');
+  if(btn) btn.textContent=mode==='dark'?'☀️':'🌙';
+  toast(mode==='dark'?'Dunkelmodus \u2713':'Hellmodus \u2713');
+}
+function toggleDarkMode(){
+  const cur=document.documentElement.getAttribute('data-mode')||'light';
+  setMode(cur==='dark'?'light':'dark');
+}
+function initTheme(){
+  // Legacy-Migration (altes msk_theme)
+  const legacy=localStorage.getItem('msk_theme');
+  if(legacy){
+    if(legacy==='dunkel'){localStorage.setItem('ol_color','blau');localStorage.setItem('ol_mode','dark');}
+    else{localStorage.setItem('ol_color',legacy);localStorage.setItem('ol_mode','light');}
+    localStorage.removeItem('msk_theme');
+  }
+  const color=localStorage.getItem('ol_color')||'blau';
+  const mode=localStorage.getItem('ol_mode')||'light';
+  document.documentElement.setAttribute('data-theme',color);
+  document.documentElement.setAttribute('data-mode',mode);
+  setTimeout(()=>{
+    document.querySelectorAll('.theme-color-btn').forEach(b=>b.classList.toggle('active',b.dataset.color===color));
+    document.querySelectorAll('.theme-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+    const btn=document.getElementById('dark-toggle-btn');
+    if(btn) btn.textContent=mode==='dark'?'☀️':'🌙';
+  },0);
+}
+// Legacy-Alias
+function setTheme(name){setColor(name);}
+
+// ===== ZOOM =====
+let _zoom = parseFloat(localStorage.getItem('msk_zoom')||'1');
+function applyZoom(){
+  document.querySelector('.layout').style.transform = `scale(${_zoom})`;
+  document.querySelector('.layout').style.width = `${100/_zoom}%`;
+  document.querySelector('.layout').style.transformOrigin = 'top left';
+  localStorage.setItem('msk_zoom', _zoom);
+  const ind = document.getElementById('zoom-indicator');
+  if(ind){ ind.textContent = 'Zoom: '+Math.round(_zoom*100)+'%'; ind.classList.add('show'); clearTimeout(ind._t); ind._t=setTimeout(()=>ind.classList.remove('show'),1500); }
+}
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && (e.key==='+'||e.key==='=')){
+    e.preventDefault(); _zoom=Math.min(2, parseFloat((_zoom+0.1).toFixed(1))); applyZoom();
+  } else if((e.ctrlKey||e.metaKey) && e.key==='-'){
+    e.preventDefault(); _zoom=Math.max(0.5, parseFloat((_zoom-0.1).toFixed(1))); applyZoom();
+  } else if((e.ctrlKey||e.metaKey) && e.key==='0'){
+    e.preventDefault(); _zoom=1; applyZoom();
+  }
+});
+
+// ===== SAMPLE DATA =====
+function addSampleData(){
+  // Pre-fill company settings on first run
+  if(!state.settings.name){
+    Object.assign(state.settings, {
+      name: '',
+      owner: '',
+      address: '',
+      phone: '',
+      email: '',
+      web: '',
+      slogan: '',
+      vat: '19',
+      footer: 'Zahlbar innerhalb von 14 Tagen ohne Abzug.',
+    });
+    saveSettings();
+  }
+  if(state.customers.length) return; // already has data
+  const cid=uid();
+  state.customers.push({id:cid,company:'Muster GmbH',name:'Max Mustermann',phone:'0123 456789',email:'max@muster.de',address:'Hauptstraße 1',zip:'12345',city:'Berlin',notes:''});
+  state.quotes.push({id:uid(),quoteNr:'A-2024-001',customerId:cid,subject:'Renovierungsarbeiten Büro',date:'2024-01-15',vat:19,status:'offen',intro:'vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:',outro:'Wir freuen uns auf Ihren Auftrag.',items:[{desc:'Malerarbeiten Wände',qty:80,unit:'m²',price:8},{desc:'Material (Farbe, Grundierung)',qty:1,unit:'pauschal',price:320}]});
+  state.invoices.push({id:uid(),invoiceNr:'R-2024-001',customerId:cid,subject:'Wartungsarbeiten März',date:'2024-03-01',dueDate:'2024-03-15',vat:19,status:'offen',outro:'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen.',items:[{desc:'Wartung Heizungsanlage',qty:3,unit:'Std.',price:85},{desc:'Anfahrtspauschale',qty:1,unit:'pauschal',price:25}]});
+  state.checklists.push({id:uid(),title:'Baustellenübergabe',desc:'Checkliste für die Übergabe',items:[{text:'Baustelle besenrein',done:true},{text:'Alle Werkzeuge eingesammelt',done:true},{text:'Abnahmeprotokoll unterschrieben',done:false},{text:'Schlüssel übergeben',done:false},{text:'Fotos gemacht',done:false}]});
+  state.templates.push({id:uid(),title:'Angebot abgelehnt – Nachfassen',type:'E-Mail',body:'Hallo {name},\n\nvielen Dank für Ihre Rückmeldung zu unserem Angebot vom {datum}.\n\nFalls Sie Fragen haben oder wir das Angebot anpassen können, melden Sie sich gerne bei uns.\n\nMit freundlichen Grüßen\n{firma}'});
+  state.templates.push({id:uid(),title:'Zahlungserinnerung',type:'E-Mail',body:'Hallo {name},\n\nhiermit möchten wir Sie freundlich daran erinnern, dass unsere Rechnung über {betrag} vom {datum} noch offen ist.\n\nBitte überweisen Sie den Betrag zeitnah. Bei bereits erfolgter Zahlung betrachten Sie dieses Schreiben als gegenstandslos.\n\nVielen Dank und freundliche Grüße\n{firma}'});
+  save('customers'); save('quotes'); save('invoices'); save('checklists'); save('templates');
+}
+
+// ===== PWA =====
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+// ===== INIT =====
+addSampleData();
+initTheme(); applyZoom();
+render('dashboard');
+</script>
+</body>
+</html>
