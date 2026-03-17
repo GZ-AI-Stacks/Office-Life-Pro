@@ -1222,6 +1222,7 @@ function renderInvoices(){
       <td>${statusBadge(inv.status)}</td>
       <td class="td-actions" onclick="event.stopPropagation()">
         <button class="btn-icon btn-sm" onclick="printDoc('invoice','${inv.id}')" title="Drucken/PDF" aria-label="Drucken">🖨️</button>
+        <button class="btn-icon btn-sm" onclick="exportDATEVInvoice('${inv.id}')" title="DATEV Export" style="color:#b8860b">📊</button>
         <button class="btn-icon btn-sm" onclick="cycleStatus('invoice','${inv.id}')" title="Status ändern" aria-label="Status ändern">🔄</button>
         <button class="btn-icon btn-sm" onclick="openInvoiceModal('${inv.id}')" aria-label="Bearbeiten">✏️</button>
         <button class="btn-icon btn-sm btn-danger" onclick="deleteDoc('invoice','${inv.id}')" aria-label="Löschen">🗑️</button>
@@ -1321,7 +1322,7 @@ function viewInvoice(id, e){
   );
 }
 
-function exportDATEVInvoice(id){
+async function exportDATEVInvoice(id){
   const inv = state.invoices.find(x=>x.id===id);
   if(!inv){ toast('Rechnung nicht gefunden'); return; }
   const customer = state.customers.find(x=>x.id===inv.customerId)||{};
@@ -1343,12 +1344,9 @@ function exportDATEVInvoice(id){
   const header2 = 'Umsatz (ohne Soll/Haben-Kz);Soll/Haben-Kennzeichen;WKZ Umsatz;Kurs;Basis-Umsatz;WKZ Basis-Umsatz;Konto;Gegenkonto (ohne BU-Schlüssel);BU-Schlüssel;Belegdatum;Belegfeld 1;Belegfeld 2;Skonto;Buchungstext;Postensperre;Diverse Adressnummer;Geschäftspartnerbank;Sachverhalt;Zinssperre;Beleglink;Beleginfo - Art 1;Beleginfo - Inhalt 1';
   const buchung = [umsatz,'S','EUR','','','','1200',gegenkonto,'',datevDate,invNr,'','',buchungstext].join(';');
   const csv = header1+'\r\n'+header2+'\r\n'+buchung;
-  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download='DATEV-'+invNr+'-'+dp[0]+dp[1]+dp[2]+'.csv'; a.click();
-  URL.revokeObjectURL(url);
-  toast('DATEV-Export erstellt');
+  const filename='DATEV-'+invNr+'-'+dp[0]+dp[1]+dp[2]+'.csv';
+  if(window.showSaveFilePicker){try{const fh=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'DATEV CSV',accept:{'text/csv':['.csv']}}]});const w=await fh.createWritable();await w.write('\uFEFF'+csv);await w.close();toast('DATEV-Export gespeichert');return;}catch(e){if(e.name==='AbortError')return;}}
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);toast('DATEV-Export erstellt');
 }
 
 function markPaid(id){
