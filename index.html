@@ -1345,8 +1345,8 @@ async function exportDATEVInvoice(id){
   const buchung = [umsatz,'S','EUR','','','','1200',gegenkonto,'',datevDate,invNr,'','',buchungstext].join(';');
   const csv = header1+'\r\n'+header2+'\r\n'+buchung;
   const filename='DATEV-'+invNr+'-'+dp[0]+dp[1]+dp[2]+'.csv';
-  if(window.showSaveFilePicker){try{const fh=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'DATEV CSV',accept:{'text/csv':['.csv']}}]});const w=await fh.createWritable();await w.write('\uFEFF'+csv);await w.close();toast('DATEV-Export gespeichert');return;}catch(e){if(e.name==='AbortError')return;}}
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);toast('DATEV-Export erstellt');
+  if(window.showSaveFilePicker){try{const fh=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'DATEV CSV',accept:{'text/csv':['.csv']}}]});const w=await fh.createWritable();await w.write('\uFEFF'+csv);await w.close();toast('✓ DATEV gespeichert — Rechnung jetzt als PDF sichern 🖨️ (GoBD)');return;}catch(e){if(e.name==='AbortError')return;}}
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);toast('✓ DATEV exportiert — Rechnung jetzt als PDF sichern 🖨️ (GoBD)');
 }
 
 function markPaid(id){
