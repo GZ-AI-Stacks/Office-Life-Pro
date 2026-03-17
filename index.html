@@ -1316,8 +1316,39 @@ function viewInvoice(id, e){
     + markPaidBtn
     + '<button class="btn btn-ghost" onclick="openInvoiceModal(\'' + id + '\')">✏️ Bearbeiten</button>'
     + '<button class="btn btn-ghost" onclick="printDoc(\'invoice\',\'' + id + '\')">🖨️ Drucken / PDF</button>'
+    + '<button class="btn btn-ghost" onclick="exportDATEVInvoice(\'' + id + '\')" style="color:#b8860b;border:1px solid #b8860b">📊 DATEV</button>'
     + '</div>'
   );
+}
+
+function exportDATEVInvoice(id){
+  const inv = state.invoices.find(x=>x.id===id);
+  if(!inv){ toast('Rechnung nicht gefunden'); return; }
+  const customer = state.customers.find(x=>x.id===inv.customerId)||{};
+  const net = calcNet(inv.items);
+  const vat = inv.vat||19;
+  const vatAmt = net*vat/100;
+  const gross = net+vatAmt;
+  const invNr = inv.invoiceNr||id;
+  const dateStr = inv.date||new Date().toISOString().slice(0,10);
+  const dp = dateStr.split('-');
+  const datevDate = dp[2]+dp[1];
+  let gegenkonto = '';
+  if(vat===19) gegenkonto='8400';
+  else if(vat===7) gegenkonto='8300';
+  else if(vat===0) gegenkonto='4400';
+  const umsatz = gross.toFixed(2).replace('.',',');
+  const buchungstext = (customer.name||'Kunde').replace(/;/g,' ');
+  const header1 = '"EXTF";700;21;"Buchungsstapel";9;20260101000000000;;"RE";"";"";"";0;20260101;4;EUR;"";"";"Office Life GZ-AI.-Stacks";"";"";"";""';
+  const header2 = 'Umsatz (ohne Soll/Haben-Kz);Soll/Haben-Kennzeichen;WKZ Umsatz;Kurs;Basis-Umsatz;WKZ Basis-Umsatz;Konto;Gegenkonto (ohne BU-Schlüssel);BU-Schlüssel;Belegdatum;Belegfeld 1;Belegfeld 2;Skonto;Buchungstext;Postensperre;Diverse Adressnummer;Geschäftspartnerbank;Sachverhalt;Zinssperre;Beleglink;Beleginfo - Art 1;Beleginfo - Inhalt 1';
+  const buchung = [umsatz,'S','EUR','','','','1200',gegenkonto,'',datevDate,invNr,'','',buchungstext].join(';');
+  const csv = header1+'\r\n'+header2+'\r\n'+buchung;
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='DATEV-'+invNr+'-'+dp[0]+dp[1]+dp[2]+'.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('DATEV-Export erstellt');
 }
 
 function markPaid(id){
