@@ -366,6 +366,7 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
     <div class="nav-item" data-page="zeit"><span class="icon">⏱️</span> Zeiterfassung</div>
     <div class="nav-item" data-page="templates"><span class="icon">💬</span> Vorlagen</div>
     <div class="nav-item" data-page="settings"><span class="icon">⚙️</span> Einstellungen</div>
+    <div class="nav-item" data-page="help"><span class="icon">❓</span> Hilfe</div>
   </nav>
   <div class="sidebar-footer" style="display:flex;align-items:center;justify-content:space-between">
     <span>Pro · v1.2 · Offline</span>
@@ -378,7 +379,10 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
 <div class="topbar">
   <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menü öffnen/schließen" aria-expanded="false" aria-controls="sidebar">☰</button>
   <h2 id="topbar-title">Dashboard</h2>
+  <div style="display:flex;gap:4px;align-items:center">
+  <button onclick="navigate('help')" aria-label="Hilfe öffnen" title="Hilfe" style="background:none;border:none;cursor:pointer;font-size:18px;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">❓</button>
   <button id="dash-btn" onclick="navigate('dashboard')" aria-label="Zum Dashboard" title="Zum Dashboard" style="display:none;background:none;border:none;cursor:pointer;font-size:20px;width:32px;height:32px;border-radius:6px;display:none;align-items:center;justify-content:center;opacity:.75" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">🏠</button>
+</div>
 </div>
 
 <!-- MAIN -->
@@ -652,6 +656,99 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
   </div>
 </div>
 
+<div class="page" id="page-help">
+<div style="max-width:760px;margin:0 auto;padding:8px 0 40px">
+
+<h2 style="font-size:1.4rem;font-weight:800;margin-bottom:1.5rem;color:var(--text)">❓ Hilfe & Anleitung</h2>
+
+<!-- ERSTE SCHRITTE -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Erste Schritte</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Firmendaten einrichten</h3>
+  <div style="display:flex;flex-direction:column;gap:.6rem">
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">1</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Seitenleiste → <strong style="color:var(--text)">⚙️ Einstellungen</strong></div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">2</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Firmenname, Inhaber, Adresse, Telefon, E-Mail eintragen</div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">3</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem"><strong style="color:var(--text)">Steuernummer / USt-IdNr.</strong> und <strong style="color:var(--text)">IBAN</strong> eintragen – erscheinen auf Rechnungen</div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">4</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">MwSt-Satz (19 % / 7 % / 0 %) und Zahlungsziel festlegen → <strong style="color:var(--text)">Speichern</strong></div></div>
+  </div>
+  <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:.8rem 1rem;font-size:.83rem;color:var(--muted);margin-top:1rem"><strong style="color:var(--p)">Kleinunternehmer:</strong> MwSt auf 0 % setzen und im Fußnotenfeld eintragen: „Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gem. §19 UStG."</div>
+</div>
+
+<!-- KUNDEN -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Kunden</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Kunden verwalten</h3>
+  <div style="display:flex;flex-direction:column;gap:.6rem">
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">1</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Seitenleiste → <strong style="color:var(--text)">👥 Kunden</strong> → <strong style="color:var(--text)">+ Neuer Kunde</strong></div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">2</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Firma, Ansprechpartner, Adresse, Telefon, E-Mail eintragen → <strong style="color:var(--text)">Speichern</strong></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem;margin-top:1rem">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">✏️</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">Bearbeiten</div><div style="font-size:.8rem;color:var(--muted)">✏️-Symbol neben dem Kunden klicken</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">🔍</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">Suchen</div><div style="font-size:.8rem;color:var(--muted)">Suchfeld filtert Kunden in Echtzeit</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">🗑️</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">Löschen</div><div style="font-size:.8rem;color:var(--muted)">🗑️ klicken und bestätigen</div></div>
+  </div>
+</div>
+
+<!-- ANGEBOTE & RECHNUNGEN -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Dokumente</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Angebote & Rechnungen erstellen</h3>
+  <div style="display:flex;flex-direction:column;gap:.6rem">
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">1</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Seitenleiste → <strong style="color:var(--text)">📋 Angebote</strong> oder <strong style="color:var(--text)">💶 Rechnungen</strong> → <strong style="color:var(--text)">+ Neu</strong></div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">2</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Kunden wählen, Positionen eintragen (Bezeichnung, Menge, Preis)</div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">3</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Speichern → <strong style="color:var(--text)">🖨️ Drucken / PDF</strong> zum Speichern oder Drucken</div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">4</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem"><strong style="color:var(--text)">📊 DATEV Export</strong> → CSV-Datei für den Steuerberater speichern</div></div>
+  </div>
+  <div style="background:rgba(234,88,12,.06);border:1px solid rgba(234,88,12,.2);border-radius:8px;padding:.8rem 1rem;font-size:.83rem;color:var(--muted);margin-top:1rem"><strong style="color:#ea580c">GoBD-Hinweis:</strong> Rechnungen müssen als PDF archiviert werden und dürfen nach dem Versand nicht mehr verändert werden.</div>
+</div>
+
+<!-- ZEITERFASSUNG -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Zeiterfassung</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Zeiten erfassen</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">▶️</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">Timer starten</div><div style="font-size:.8rem;color:var(--muted)">⏱️ Zeiterfassung → Timer starten → bei Fertig stoppen und Kunden zuweisen</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">✍️</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">Manuell eintragen</div><div style="font-size:.8rem;color:var(--muted)">Datum, Dauer und Tätigkeit direkt eintragen</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem"><span style="font-size:1.2rem">💶</span><div style="font-size:.85rem;font-weight:700;color:var(--text);margin:.3rem 0 .2rem">→ Rechnung</div><div style="font-size:.8rem;color:var(--muted)">Zeiten direkt in eine Rechnung übernehmen</div></div>
+  </div>
+</div>
+
+<!-- TASTENKÜRZEL -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Tastenkürzel & Zoom</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Keyboard Shortcuts</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem;font-size:.85rem"><span style="font-family:monospace;background:var(--border);padding:.1rem .4rem;border-radius:4px;color:var(--text)">Strg +</span> <span style="color:var(--muted);margin-left:.4rem">Vergrößern</span></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem;font-size:.85rem"><span style="font-family:monospace;background:var(--border);padding:.1rem .4rem;border-radius:4px;color:var(--text)">Strg −</span> <span style="color:var(--muted);margin-left:.4rem">Verkleinern</span></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem;font-size:.85rem"><span style="font-family:monospace;background:var(--border);padding:.1rem .4rem;border-radius:4px;color:var(--text)">Strg 0</span> <span style="color:var(--muted);margin-left:.4rem">Zoom zurücksetzen</span></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem;font-size:.85rem"><span style="font-family:monospace;background:var(--border);padding:.1rem .4rem;border-radius:4px;color:var(--text)">Escape</span> <span style="color:var(--muted);margin-left:.4rem">Fenster schließen</span></div>
+  </div>
+  <div style="font-size:.83rem;color:var(--muted);margin-top:.8rem">Zoom-Buttons <strong style="color:var(--text)">− / +</strong> sind auch unten rechts in der App sichtbar.</div>
+</div>
+
+<!-- BACKUP -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Datensicherung</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)">Backup & Wiederherstellung</h3>
+  <div style="display:flex;flex-direction:column;gap:.6rem">
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">1</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem"><strong style="color:var(--text)">⚙️ Einstellungen</strong> → <strong style="color:var(--text)">Backup exportieren</strong> → JSON-Datei wird gespeichert</div></div>
+    <div style="display:flex;gap:.8rem;align-items:flex-start"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff">2</div><div style="font-size:.88rem;color:var(--muted);padding-top:.1rem">Zum Wiederherstellen: <strong style="color:var(--text)">Backup importieren</strong> → JSON-Datei auswählen</div></div>
+  </div>
+  <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:.8rem 1rem;font-size:.83rem;color:var(--muted);margin-top:1rem"><strong style="color:var(--p)">Hinweis:</strong> Alle Daten werden lokal auf deinem Gerät gespeichert (localStorage). Regelmäßiges Backup empfohlen.</div>
+</div>
+
+<!-- KONTAKT -->
+<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:1.4rem">
+  <div style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:.5rem">Support</div>
+  <h3 style="font-size:1rem;font-weight:700;margin-bottom:.6rem;color:var(--text)">Fragen oder Probleme?</h3>
+  <p style="font-size:.88rem;color:var(--muted);margin-bottom:.8rem">Wir helfen gerne weiter.</p>
+  <a href="mailto:gz.ai.stacks@gmail.com?subject=Office Life Support" style="display:inline-flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;color:var(--p);border:1px solid var(--p);padding:.4rem 1rem;border-radius:8px;text-decoration:none">✉️ gz.ai.stacks@gmail.com</a>
+  <div style="font-size:.8rem;color:var(--muted);margin-top:.6rem">GZ-AI.-Stacks · Zimmermann AI Systems</div>
+</div>
+
+</div>
+</div>
+
 </div><!-- /main -->
 </div><!-- /flex -->
 </div><!-- /layout -->
@@ -707,7 +804,7 @@ function navigate(page){
   document.getElementById('topbar-title').textContent = {
     dashboard:'Dashboard',customers:'Kunden',quotes:'Angebote',
     invoices:'Rechnungen',checklists:'Checklisten',zeit:'Zeiterfassung',
-    templates:'Vorlagen',settings:'Einstellungen'
+    templates:'Vorlagen',settings:'Einstellungen',help:'Hilfe'
   }[page];
   render(page);
   closeSidebar();
