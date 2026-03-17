@@ -271,6 +271,10 @@ select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3C
   opacity:0;transition:opacity .3s;pointer-events:none;
 }
 .zoom-indicator.show{opacity:1}
+.zoom-controls{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:4px;background:var(--side-bg,#1e293b);border-radius:8px;padding:4px 8px;z-index:9997;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.zoom-btn{background:none;border:none;color:#fff;font-size:17px;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;line-height:1;opacity:.8}
+.zoom-btn:hover{background:rgba(255,255,255,.15);opacity:1}
+#zoom-val{color:#fff;font-size:12px;min-width:38px;text-align:center;opacity:.8}
 /* ══════ LICENSE SCREEN ══════ */
 ._ls4fw{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f0f4f8,#e8eef5);display:flex;align-items:center;justify-content:center;padding:24px}
 @media(prefers-color-scheme:dark){._ls4fw{background:linear-gradient(135deg,#1a1a2e,#16213e)}}
@@ -372,9 +376,9 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
 <!-- TOPBAR MOBILE -->
 <div style="flex:1;display:flex;flex-direction:column">
 <div class="topbar">
-  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü öffnen/schließen">☰</button>
+  <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menü öffnen/schließen" aria-expanded="false" aria-controls="sidebar">☰</button>
   <h2 id="topbar-title">Dashboard</h2>
-  <div style="width:32px"></div>
+  <button id="dash-btn" onclick="navigate('dashboard')" aria-label="Zum Dashboard" title="Zum Dashboard" style="display:none;background:none;border:none;cursor:pointer;font-size:20px;width:32px;height:32px;border-radius:6px;display:none;align-items:center;justify-content:center;opacity:.75" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">🏠</button>
 </div>
 
 <!-- MAIN -->
@@ -511,7 +515,7 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
     <div style="overflow-x:auto">
     <table id="zeit-table">
       <thead><tr>
-        <th><input type="checkbox" id="zeit-check-all" onchange="toggleAllZeit(this)"></th>
+        <th><input type="checkbox" id="zeit-check-all" onchange="toggleAllZeit(this)" aria-label="Alle Einträge auswählen"></th>
         <th>Datum</th><th>Kunde</th><th>Tätigkeit</th><th>Dauer</th><th>Std.</th><th></th>
       </tr></thead>
       <tbody id="zeit-body"></tbody>
@@ -664,6 +668,11 @@ document.getElementById('_lIjo1g').addEventListener('keydown',function(e){if(e.k
 <div id="print-area" style="display:none"></div>
 
 <div class="zoom-indicator" id="zoom-indicator"></div>
+<div class="zoom-controls" role="group" aria-label="Zoom-Steuerung">
+  <button class="zoom-btn" onclick="_zoom=Math.max(0.5,parseFloat((_zoom-0.1).toFixed(1)));applyZoom()" aria-label="Verkleinern" title="Verkleinern (Strg+−)">−</button>
+  <span id="zoom-val" aria-live="polite">100%</span>
+  <button class="zoom-btn" onclick="_zoom=Math.min(2,parseFloat((_zoom+0.1).toFixed(1)));applyZoom()" aria-label="Vergrößern" title="Vergrößern (Strg++)">+</button>
+</div>
 
 <script>
 // ===== DB =====
@@ -702,6 +711,7 @@ function navigate(page){
   }[page];
   render(page);
   closeSidebar();
+  const db=document.getElementById('dash-btn'); if(db) db.style.display=page==='dashboard'?'none':'flex';
 }
 
 document.getElementById('nav').addEventListener('click', e=>{
@@ -710,7 +720,7 @@ document.getElementById('nav').addEventListener('click', e=>{
 });
 
 // ===== SIDEBAR TOGGLE =====
-function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+function toggleSidebar(){ const open=document.getElementById('sidebar').classList.toggle('open'); const btn=document.getElementById('hamburger-btn'); if(btn) btn.setAttribute('aria-expanded',open); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); }
 
 // ===== TOAST =====
@@ -879,7 +889,13 @@ function saveCustomer(id){
     city: document.getElementById('c-city').value.trim(),
     notes: document.getElementById('c-notes').value.trim(),
   };
-  if(!c.company&&!c.name){ toast('Bitte Name oder Firma eingeben'); return; }
+  if(!c.company&&!c.name){
+  const fn=document.getElementById('c-name'); const fc=document.getElementById('c-company');
+  if(fn) fn.setAttribute('aria-invalid','true'); if(fc) fc.setAttribute('aria-invalid','true');
+  toast('Bitte Name oder Firma eingeben'); return;
+}
+const fn2=document.getElementById('c-name'); const fc2=document.getElementById('c-company');
+if(fn2) fn2.removeAttribute('aria-invalid'); if(fc2) fc2.removeAttribute('aria-invalid');
   if(id) { const i=state.customers.findIndex(x=>x.id===id); state.customers[i]=c; }
   else state.customers.push(c);
   save('customers'); forceClose(); renderCustomers(); toast('Kunde gespeichert ✓');
@@ -1158,7 +1174,7 @@ function openQuoteModal(id){
 function saveQuote(id){
   const customerId=document.getElementById('doc-customer').value;
   const subject=document.getElementById('doc-subject').value.trim();
-  if(!subject){ toast('Bitte Betreff eingeben'); return; }
+  if(!subject){ const sf=document.getElementById('doc-subject'); if(sf){sf.setAttribute('aria-invalid','true');} toast('Bitte Betreff eingeben'); return; }
   const q={
     id:id||uid(), quoteNr:document.getElementById('doc-nr').value.trim(),
     customerId, subject,
@@ -1389,7 +1405,7 @@ function openInvoiceModal(id, fromQuote){
 
 function saveInvoice(id){
   const subject=document.getElementById('doc-subject').value.trim();
-  if(!subject){ toast('Bitte Betreff eingeben'); return; }
+  if(!subject){ const sf=document.getElementById('doc-subject'); if(sf){sf.setAttribute('aria-invalid','true');} toast('Bitte Betreff eingeben'); return; }
   const inv={
     id:id||uid(),
     invoiceNr:document.getElementById('doc-nr').value.trim(),
@@ -1670,12 +1686,12 @@ function printChecklistProtocol(clId, withSig){
 
 </style></head>
   <body>
-    ${s.logo?`<img src="${s.logo}" style="max-height:50px;margin-bottom:16px">`:''}
+    ${s.logo?`<img src="${s.logo}" alt="Firmenlogo" style="max-height:50px;margin-bottom:16px">`:''}
     <h1>Protokoll: ${cl.title}</h1>
     <div class="meta">Erstellt: ${now} · ${done}/${cl.items.length} erledigt${s.name?' · '+s.name:''}</div>
     ${cl.items.map(it=>`<div class="item"><span class="check">${it.done?'✅':'⬜'}</span><span class="text">${it.text}</span></div>`).join('')}
-    ${photos.length?`<div style="font-weight:600;margin-top:20px;margin-bottom:8px">Fotos (${photos.length})</div><div class="photos">${photos.map(p=>`<img src="${p}">`).join('')}</div>`:''}
-    ${sigData?`<div style="margin-top:30px"><div style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:8px">Unterschrift</div><div class="sig-box"><img src="${sigData}"><div class="sig-line"><div class="sig-name">${sigName||'Unterschrift'}</div></div></div></div>`:''}
+    ${photos.length?`<div style="font-weight:600;margin-top:20px;margin-bottom:8px">Fotos (${photos.length})</div><div class="photos">${photos.map(p=>`<img src="${p}" alt="Foto">`).join('')}</div>`:''}
+    ${sigData?`<div style="margin-top:30px"><div style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:8px">Unterschrift</div><div class="sig-box"><img src="${sigData}" alt="Unterschrift"><div class="sig-line"><div class="sig-name">${sigName||'Unterschrift'}</div></div></div></div>`:''}
     <div class="footer"><span>${s.name||''} · ${s.address||''}</span><span>${now}</span></div>
   <script>window.onload=()=>window.print()<\/script></body></html>`;
   forceClose();
@@ -1701,7 +1717,7 @@ function viewPhoto(clId, idx){
   const src=cl.photos[idx];
   openModal(`
     <div class="modal-header"><h3>Foto ${idx+1}/${cl.photos.length}</h3><button class="modal-close" onclick="forceClose()">×</button></div>
-    <img src="${src}" style="width:100%;border-radius:8px;margin-bottom:12px">
+    <img src="${src}" alt="Foto-Vorschau" style="width:100%;border-radius:8px;margin-bottom:12px">
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="deletePhoto('${clId}',${idx})">🗑️ Löschen</button>
       <button class="btn btn-ghost" onclick="forceClose()">Schließen</button>
@@ -1759,7 +1775,7 @@ function addClItem(){
 
 function saveChecklist(id){
   const title=document.getElementById('cl-title').value.trim();
-  if(!title){ toast('Bitte Titel eingeben'); return; }
+  if(!title){ const tf=document.getElementById('cl-title'); if(tf) tf.setAttribute('aria-invalid','true'); toast('Bitte Titel eingeben'); return; }
   const inputs=[...document.querySelectorAll('#cl-items-list input')].map(i=>i.value.trim()).filter(Boolean);
   if(!inputs.length){ toast('Bitte mindestens einen Punkt eingeben'); return; }
   const existing = id ? state.checklists.find(x=>x.id===id) : null;
@@ -1822,7 +1838,7 @@ function openTemplateModal(id){
 function saveTemplate(id){
   const title=document.getElementById('tpl-title').value.trim();
   const body=document.getElementById('tpl-body').value.trim();
-  if(!title||!body){ toast('Bitte Titel und Text eingeben'); return; }
+  if(!title||!body){ const tt=document.getElementById('tpl-title'); const tb=document.getElementById('tpl-body'); if(tt&&!title) tt.setAttribute('aria-invalid','true'); if(tb&&!body) tb.setAttribute('aria-invalid','true'); toast('Bitte Titel und Text eingeben'); return; }
   const t={id:id||uid(),title,type:document.getElementById('tpl-type').value,body};
   if(id){ const i=state.templates.findIndex(x=>x.id===id); state.templates[i]=t; }
   else state.templates.push(t);
@@ -1931,7 +1947,7 @@ function renderZeit(){
   if(el) el.textContent='Gesamt: '+secsToHHMM(totalSecs)+' h';
   document.getElementById('zeit-body').innerHTML=list.length?list.map(z=>`
     <tr style="cursor:pointer" onclick="viewZeit('${z.id}',event)">
-      <td onclick="event.stopPropagation()"><input type="checkbox" class="zeit-check" data-id="${z.id}"></td>
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="zeit-check" data-id="${z.id}" aria-label=`Eintrag auswählen: ${fmtDate(z.date)}`></td>
       <td>${fmtDate(z.date)}</td>
       <td>${getCustomerName(z.customerId)}</td>
       <td>${z.desc||'–'}</td>
@@ -2173,6 +2189,7 @@ function applyZoom(){
   localStorage.setItem('msk_zoom', _zoom);
   const ind = document.getElementById('zoom-indicator');
   if(ind){ ind.textContent = 'Zoom: '+Math.round(_zoom*100)+'%'; ind.classList.add('show'); clearTimeout(ind._t); ind._t=setTimeout(()=>ind.classList.remove('show'),1500); }
+  const val=document.getElementById('zoom-val'); if(val) val.textContent=Math.round(_zoom*100)+'%';
 }
 document.addEventListener('keydown', e=>{
   if((e.ctrlKey||e.metaKey) && (e.key==='+'||e.key==='=')){
@@ -2181,6 +2198,8 @@ document.addEventListener('keydown', e=>{
     e.preventDefault(); _zoom=Math.max(0.5, parseFloat((_zoom-0.1).toFixed(1))); applyZoom();
   } else if((e.ctrlKey||e.metaKey) && e.key==='0'){
     e.preventDefault(); _zoom=1; applyZoom();
+  } else if(e.key==='Escape'){
+    forceClose();
   }
 });
 
