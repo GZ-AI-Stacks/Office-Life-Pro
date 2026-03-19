@@ -1,4 +1,4 @@
-const CACHE = 'meisterdesk-v1';
+const CACHE = 'meisterdesk-v2';
 const FILES = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
